@@ -115,8 +115,5 @@ class AutoFarm {
       console.log(delay);
       await this.utils.timeout(delay);
     }
-    //await this.repeatFarm();
-
-    //setInterval(this.myFunction, 1000);
   }
 }

@@ -167,6 +167,10 @@ class AttackDodger {
   async makeDodge(dodgeFromTown) {
     console.log("Hello i was called after 10 seconds");
     const dodgeTo = localStorage.getItem(dodgeFromTown);
+    if (!dodgeTo) {
+      console.warn(`No dodge target configured for town: ${dodgeFromTown}`);
+      return;
+    }
     let dodgeObj = JSON.parse(dodgeTo);
 
     await this.utils.timeout(1488 + this.utils.generateDelay());

@@ -112,13 +112,17 @@ class DodgeUI {
       "#ui_box > div.town_name_area > div.btn_prev_town.button_arrow.left"
     );
 
-    arrowRight.addEventListener("click", () => {
-      this.refreshDodgeInfo();
-    });
+    if (arrowRight) {
+      arrowRight.addEventListener("click", () => {
+        this.refreshDodgeInfo();
+      });
+    }
 
-    arrowLeft.addEventListener("click", () => {
-      this.refreshDodgeInfo();
-    });
+    if (arrowLeft) {
+      arrowLeft.addEventListener("click", () => {
+        this.refreshDodgeInfo();
+      });
+    }
 
     // Placeholder text for the inputs
     playerNameInput.placeholder = "Enter Player Name";

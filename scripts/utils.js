@@ -17,18 +17,22 @@ class Utils {
   }
 
   waitForElementToAppear(selector, callback, interval = 100, maxAttempts = 10) {
-    var attempts = 0;
-    var timer = setInterval(function () {
-      attempts++;
-      var element = document.querySelector(selector);
-      if (element || attempts >= maxAttempts) {
-        clearInterval(timer);
-        if (element) {
-          callback(element);
-        } else {
-          console.log("Element not found within the specified time.");
+    return new Promise((resolve) => {
+      let attempts = 0;
+      const timer = setInterval(() => {
+        attempts++;
+        const element = document.querySelector(selector);
+        if (element || attempts >= maxAttempts) {
+          clearInterval(timer);
+          if (element) {
+            if (callback) callback(element);
+            resolve(element);
+          } else {
+            console.warn(`Element not found: ${selector}`);
+            resolve(null);
+          }
         }
-      }
-    }, interval);
+      }, interval);
+    });
   }
 }

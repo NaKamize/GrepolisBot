@@ -1,19 +1,61 @@
 # GrepolisBot
 
-// ==UserScript==
-// @name         Grepolisbot
-// @namespace    http://tampermonkey.net/
-// @version      0.1
-// @description  try to take over the world!
-// @author       You
-// @match        https://*.grepolis.com/game/*
-// @icon         https://www.google.com/s2/favicons?sz=64&domain=grepolis.com
-// @grant        none
-// @require      https://raw.githubusercontent.com/NaKamize/GrepolisBot/main/UI/culture.js?token=GHSAT0AAAAAACDJS7WGCBHK5FXEDGVMDH5QZEI263A
-// @require      https://raw.githubusercontent.com/NaKamize/GrepolisBot/main/UI/farm.js?token=GHSAT0AAAAAACDJS7WHBMBPBCD2AXD5WXBYZEI27FQ
-// @require      https://raw.githubusercontent.com/NaKamize/GrepolisBot/main/UI/panel.js?token=GHSAT0AAAAAACDJS7WGRDGDDFAEMQSPTTP4ZEI27OA
-// @require      https://raw.githubusercontent.com/NaKamize/GrepolisBot/main/scripts/autofarm.js?token=GHSAT0AAAAAACDJS7WHI37PMACBVJ2YDWGEZEI25OQ
-// @require      https://raw.githubusercontent.com/NaKamize/GrepolisBot/main/scripts/autoculture.js?token=GHSAT0AAAAAACDJS7WGCJKAIL2BKW5RSZC6ZEI247A
-// @require      https://raw.githubusercontent.com/NaKamize/GrepolisBot/main/scripts/utils.js?token=GHSAT0AAAAAACDJS7WHA2MWTQTFZK4TCNXIZEI25YQ
-// @require      https://raw.githubusercontent.com/NaKamize/GrepolisBot/main/main.js?token=GHSAT0AAAAAACDJS7WGWQNDEBBZAHWSSQ7GZEI235Q
-// ==/UserScript==
+[![Greasy Fork](https://img.shields.io/badge/Greasy%20Fork-61%20installs-brightgreen?logo=tampermonkey)](https://greasyfork.org/en/scripts/468760-grepolisbot)
+[![GitHub](https://img.shields.io/badge/GitHub-NaKamize%2FGrepolisBot-blue?logo=github)](https://github.com/NaKamize/GrepolisBot)
+
+A [Tampermonkey](https://www.tampermonkey.net/) userscript bot for [Grepolis](https://www.grepolis.com/) that automates repetitive in-game tasks — farm collection, culture events, and attack dodging — so you can focus on strategy.
+
+> **61 installs on GreasyFork and growing!** Thank you to everyone who uses GrepolisBot.
+
+---
+
+## Features
+
+| Feature | Description |
+|---|---|
+| **AutoFarm** | Automatically collects resources from all farm towns at a configurable interval (5 min – 8 hours) |
+| **AutoCulture** | Starts culture celebrations (Town Festival, Olympic Games, Triumph Procession, Theatre Plays) on a schedule |
+| **AttackDodger** | Detects incoming attacks and automatically sends your troops to a safe town ~40 seconds before impact |
+
+The control panel is **draggable** — place it wherever you like on the screen.
+
+---
+
+## Installation
+
+1. Install [Tampermonkey](https://www.tampermonkey.net/) for your browser (Chrome, Firefox, Edge, etc.).
+2. Go to the **[GreasyFork page](https://greasyfork.org/en/scripts/468760-grepolisbot)** and click **Install this script**.
+3. Open [Grepolis](https://www.grepolis.com/) — the bot panel will appear automatically inside the game.
+
+---
+
+## Usage
+
+### AutoFarm
+1. Select the farming interval from the dropdown (e.g. `01:30:00` for every 1.5 hours).
+2. Click **Start** — the bot will automatically collect from all farm towns and repeat at that interval.
+
+### AutoCulture
+1. Select the **celebration type** from the first dropdown.
+2. Select the **timing** from the second dropdown.
+3. Click **Start** — the bot will queue the celebration.
+
+### AttackDodger
+1. Switch to the town you want to dodge **from** using the in-game town arrows.
+2. Enter the **Player Name** and **Town Name** of the safe destination, then click **Submit** (saved per town to `localStorage`).
+3. Click **Start** — the bot monitors all incoming attacks and automatically moves your troops before each attack lands.
+
+---
+
+## How It Works
+
+- All actions use randomised delays to mimic human behaviour.
+- The dodger schedules troop movement 40 seconds before the calculated impact time.
+- Dodge targets are persisted in `localStorage`, so they survive page refreshes.
+
+---
+
+## Links
+
+- [GreasyFork](https://greasyfork.org/en/scripts/468760-grepolisbot) — install & rate the script
+- [GitHub](https://github.com/NaKamize/GrepolisBot) — source code & issues
