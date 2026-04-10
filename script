@@ -1,998 +1,180 @@
-"use strict";
-
-class AutoCulture {
-  constructor() {
-    this.utils = new Utils();
-  }
-
-  async selectOverview() {
-    this.utils.waitForElementToAppear(
-      "#overviews_link_hover_menu > div.box.middle.left > div > div > ul > li.subsection.curator.enabled > ul > li.culture_overview > a",
-      (element) => {
-        element.click();
-      }
-    );
-    await this.utils.timeout(658 + this.utils.generateDelay());
-  }
-
-  async confirm() {
-    this.utils.waitForElementToAppear("#start_all_celebrations", (element) => {
-      element.click();
-    });
-    await this.utils.timeout(1001 + this.utils.generateDelay());
-  }
-
-  async close() {
-    this.utils.waitForElementToAppear(
-      "body > div.ui-dialog.ui-corner-all.ui-widget.ui-widget-content.ui-front.ui-draggable.js-window-main-container > div.ui-dialog-titlebar.ui-corner-all.ui-widget-header.ui-helper-clearfix.ui-draggable-handle > button",
-      (element) => {
-        element.click();
-      }
-    );
-    await this.utils.timeout(1488 + this.utils.generateDelay());
-  }
-
-  async selectOption(opt) {
-    let num = 1;
-    switch (opt) {
-      case "Mestský festival":
-        num = 1;
-        break;
-      case "Olympijské hry":
-        num = 2;
-        break;
-      case "Víťazná procesia":
-        num = 3;
-        break;
-      case "Divadelné hry":
-        num = 4;
-        break;
-    }
-
-    this.utils.waitForElementToAppear(
-      "#place_celebration_select",
-      (element) => {
-        element.click();
-      }
-    );
-    await this.utils.timeout(1488 + this.utils.generateDelay());
-
-    this.utils.waitForElementToAppear(
-      "#place_celebration_select_list > div > div:nth-child(" + num + ")",
-      (element) => {
-        element.click();
-      }
-    );
-    await this.utils.timeout(1488 + this.utils.generateDelay());
-  }
-
-  async repeatCulture(opt) {
-    await this.selectOverview();
-    await this.selectOption(opt);
-    await this.confirm();
-    await this.close();
-    console.log("Culture is being runned.");
-  }
-
-  async run(opt, time) {
-    console.log(time);
-    const seconds = this.utils.convertToSeconds(time);
-    console.log(seconds);
-    this.seconds = seconds;
-
-    await this.repeatCulture(opt);
-
-    let delay =
-      this.seconds * 1000 +
-      Math.floor(Math.random() * (900000 - 180000) + 120000);
-    console.log(delay);
-  }
-}
-"use strict";
-
-class AutoFarm {
-  constructor() {
-    this.utils = new Utils();
-  }
-
-  async selectVillages() {
-    const linkElement = document.querySelector(
-      "#overviews_link_hover_menu > div.box.middle.left > div > div > ul > li.subsection.captain.enabled > ul > li.farm_town_overview > a"
-    );
-
-    function triggerClickEvent(target) {
-      const clickEvent = new MouseEvent("click", {
-        view: window,
-        bubbles: true,
-        cancelable: true,
-      });
-      target.dispatchEvent(clickEvent);
-    }
-
-    triggerClickEvent(linkElement);
-    await this.utils.timeout(200 + this.utils.generateDelay());
-  }
-
-  async selectAll() {
-    this.utils.waitForElementToAppear(
-      "#fto_town_wrapper > div > div.game_header.bold > span.checkbox_wrapper > a",
-      (element) => {
-        element.click();
-      }
-    );
-    await this.utils.timeout(1547 + this.utils.generateDelay());
-  }
-
-  async checkTime(seconds) {
-    if (
-      seconds === 300 ||
-      seconds === 1200 ||
-      seconds === 5400 ||
-      seconds === 14400
-    ) {
-        this.utils.waitForElementToAppear(
-        "#time_options_wrapper > div.time_options_default > div.fto_time_checkbox.fto_" +
-          seconds +
-          "> a",
-        (element) => {
-          element.click();
-        }
-      );
-    } else {
-        this.utils.waitForElementToAppear(
-        "#time_options_wrapper > div.time_options_loyalty > div.fto_time_checkbox.fto_" +
-          seconds +
-          " > a",
-        (element) => {
-          element.click();
-        }
-      );
-    }
-    await this.utils.timeout(1550 + this.utils.generateDelay());
-  }
-
-  async collect() {
-    this.utils.waitForElementToAppear(
-      "#fto_claim_button > div.caption.js-caption",
-      (element) => {
-        element.click();
-      }
-    );
-    await this.utils.timeout(2200);
-  }
-
-  async confirm() {
-    this.utils.waitForElementToAppear(
-      ".window_content.js-window-content > div > div.buttons > div.btn_confirm.button_new > div.caption.js-caption",
-      (element) => {
-        element.click();
-      }
-    );
-    await this.utils.timeout(2188 + this.utils.generateDelay());
-  }
-
-  async close() {
-    this.utils.waitForElementToAppear(
-      "body > div.ui-dialog.ui-corner-all.ui-widget.ui-widget-content.ui-front.ui-draggable.js-window-main-container > div.ui-dialog-titlebar.ui-corner-all.ui-widget-header.ui-helper-clearfix.ui-draggable-handle > button",
-      (element) => {
-        element.click();
-      }
-    );
-    await this.utils.timeout(1205 + this.utils.generateDelay());
-  }
-
-  async repeatFarm() {
-    await this.selectVillages();
-    await this.selectAll();
-    await this.checkTime(this.seconds);
-    await this.collect();
-    await this.confirm();
-    await this.close();
-    console.log("Collecting is finished");
-  }
-
-  async run(time) {
-    console.log(time);
-    const seconds = this.utils.convertToSeconds(time);
-    console.log(seconds);
-    this.seconds = seconds;
-
-    while (true) {
-      await this.repeatFarm();
-
-      let delay =
-        this.seconds * 1000 + Math.floor(Math.random() * (30000 - 5000) + 5000);
-      console.log(delay);
-      await this.utils.timeout(delay);
-    }
-    //await this.repeatFarm();
-
-    //setInterval(this.myFunction, 1000);
-  }
-}
-"use strict";
-
-class Utils {
-  timeout(delay) {
-    return new Promise((r) => setTimeout(r, delay));
-  }
-
-  generateDelay() {
-    return Math.floor(Math.random() * (4310 - 2000) + 2000);
-  }
-
-  convertToSeconds(timeString) {
-    const [hours, minutes, seconds] = timeString.split(":");
-    const totalSeconds =
-      parseInt(hours) * 3600 + parseInt(minutes) * 60 + parseInt(seconds);
-    return totalSeconds;
-  }
-
-  waitForElementToAppear(selector, callback, interval = 100, maxAttempts = 10) {
-    var attempts = 0;
-    var timer = setInterval(function () {
-      attempts++;
-      var element = document.querySelector(selector);
-      if (element || attempts >= maxAttempts) {
-        clearInterval(timer);
-        if (element) {
-          callback(element);
-        } else {
-          console.log("Element not found within the specified time.");
-        }
-      }
-    }, interval);
-  }
-}
-class AttackDodger {
-  constructor() {
-    this.utils = new Utils();
-    this.attackCount = 0;
-  }
-
-  async getListOfAttacks() {
-    this.utils.waitForElementToAppear(
-      "#toolbar_activity_commands",
-      (element) => {
-        element.click();
-      }
-    );
-    await this.utils.timeout(3877 + this.utils.generateDelay());
-    await this.getIncomingAttacks();
-  }
-
-  async parseTimeAndTown(attackInfo) {
-    let dodgeFromTown = attackInfo.children[1].children[3].innerHTML;
-    console.log(dodgeFromTown);
-    let dodgeIn = attackInfo.children[7].innerHTML;
-    console.log(dodgeIn);
-    const [hours, minutes, seconds] = dodgeIn.split(":").map(Number);
-
-    // Calculate the total seconds
-    const totalSeconds = (hours * 3600) + (minutes * 60) + seconds;
-
-    console.log(totalSeconds);
-
-    setTimeout(async () => {
-      await this.makeDodge(dodgeFromTown);
-    }, (totalSeconds*1000) - 40000);
-  }
-
-  async villagerDef() {
-    // click on town overview
-    this.utils.waitForElementToAppear(
-      "#ui_box > div.topleft_navigation_area > div.bull_eye_buttons > div.rb_map > div.option.city_overview.circle_button.js-option",
-      (element) => {
-        element.click();
-      }
-    );
-    await this.utils.timeout(300 + this.utils.generateDelay());
-
-    // select farm
-    this.utils.waitForElementToAppear("#building_main_area_farm", (element) => {
-      element.click();
-    });
-    await this.utils.timeout(300 + this.utils.generateDelay());
-
-    // select barracks
-    this.utils.waitForElementToAppear(
-      "#request_militia_button > span.left > span > span",
-      (element) => {
-        element.click();
-      }
-    );
-
-    await this.utils.timeout(300 + this.utils.generateDelay());
-
-    // select barracks
-    this.utils.waitForElementToAppear(
-      "div > div.window_content.js-window-content > div > div.buttons > div.btn_confirm.button_new",
-      (element) => {
-        element.click();
-      }
-    );
-  }
-
-  async sendAllUnits() {
-    // send all ships
-    this.utils.waitForElementToAppear(
-      "div > form > div.town_units_wrapper > div > div.unit_wrapper > div.naval_units.clearfix > div",
-      (element) => {
-        const divElements = document.querySelectorAll(
-          "div > form > div.town_units_wrapper > div > div.unit_wrapper > div.naval_units.clearfix > div"
-        );
-        for (const divElement of divElements) {
-          divElement.childNodes[1].click();
-        }
-      }
-    );
-
-    await this.utils.timeout(1488 + this.utils.generateDelay());
-    // send all ships
-    this.utils.waitForElementToAppear(
-      "div > form > div.button_wrapper > a > span.left > span > span",
-      (element) => {
-        element.click();
-      }
-    );
-    await this.utils.timeout(1488 + this.utils.generateDelay());
-
-    // send all troops
-    this.utils.waitForElementToAppear(
-      "div > form > div.town_units_wrapper > div > div.unit_wrapper > div.ground_units.clearfix > div",
-      (element) => {
-        const divElements = document.querySelectorAll(
-          "div > form > div.town_units_wrapper > div > div.unit_wrapper > div.ground_units.clearfix > div"
-        );
-        for (const divElement of divElements) {
-          divElement.childNodes[1].click();
-        }
-      }
-    );
-    await this.utils.timeout(1488 + this.utils.generateDelay());
-
-    // send all troops
-    this.utils.waitForElementToAppear(
-      "div > form > div.button_wrapper > a > span.left > span > span",
-      (element) => {
-        element.click();
-      }
-    );
-    await this.utils.timeout(10000 + this.utils.generateDelay());
-  }
-
-  async closeAll() {
-    const closeButtons = document.querySelectorAll(
-      "body > div.ui-dialog.ui-corner-all.ui-widget.ui-widget-content.ui-front.ui-draggable.ui-resizable.js-window-main-container > div.ui-dialog-titlebar.ui-corner-all.ui-widget-header.ui-helper-clearfix.ui-draggable-handle > button"
-    );
-
-    for (const button of closeButtons) {
-      button.click();
-    }
-
-    await this.utils.timeout(200 + this.utils.generateDelay());
-
-    const closeButtonsNext = document.querySelectorAll(
-      "body > div > div.ui-dialog-titlebar.ui-corner-all.ui-widget-header.ui-helper-clearfix.ui-draggable-handle > button"
-    );
-
-    for (const button of closeButtonsNext) {
-      button.click();
-    }
-  }
-
-  simulateHover(element) {
-    const hoverEvent = new MouseEvent("mouseover", {
-      bubbles: true,
-      cancelable: true,
-      view: window,
-    });
-
-    element.dispatchEvent(hoverEvent);
-  }
-
-  async cancelSendingUnits() {
-    console.log("canceling");
-
-    const elementToHover = document.querySelector(
-      "#ui_box > div.tb_activities.toolbar_activities > div.middle > div:nth-child(5) > div.activity.commands > div.hover_state"
-    );
-
-    this.simulateHover(elementToHover);
-
-    const divElements = document.querySelectorAll(
-      "div > div.button_new.square.remove.js-delete.cancelable"
-    );
-    for (const divElement of divElements) {
-      divElement.click();
-    }
-
-    await this.utils.timeout(888 + this.utils.generateDelay());
-  }
-
-  async makeDodge(dodgeFromTown) {
-    console.log("Hello i was called after 10 seconds");
-    const dodgeTo = localStorage.getItem(dodgeFromTown);
-    let dodgeObj = JSON.parse(dodgeTo);
-
-    await this.utils.timeout(1488 + this.utils.generateDelay());
-
-    // select town to dodge from
-    this.utils.waitForElementToAppear(
-      "#ui_box > div.town_name_area > div.town_groups_dropdown.btn_toggle_town_groups_menu > div.caption.js-viewport",
-      (element) => {
-        element.click();
-      }
-    );
-
-    await this.utils.timeout(1488 + this.utils.generateDelay());
-
-    const findDivByInnerText = (innerTextToFind, selector) => {
-      const divElements = document.querySelectorAll(selector);
-
-      for (const divElement of divElements) {
-        if (divElement.innerText === innerTextToFind) {
-          return divElement;
-        }
+// ==UserScript==
+// @name         GrepolisBot
+// @namespace    https://github.com/NaKamize/GrepolisBot
+// @version      2.0.0
+// @description  Automates farm collection, culture events, and attack dodging in Grepolis
+// @author       ničite4000l
+// @homepageURL  https://github.com/NaKamize/GrepolisBot
+// @match        *://*.grepolis.com/*
+// @grant        none
+// ==/UserScript==
+"use strict";(()=>{var b=class{constructor(t,e){this.mainDiv=t,this.autoFarm=e,this.isRunning=!1}createHeading(){let t=document.createElement("h3");return t.textContent="Farm Manager",t.className="gb-section-title",t.style.color="#74ff97",t}createDropDown(){let t=document.createElement("select");t.setAttribute("name","farm-drop-down"),t.className="gb-select";let e=["00:05:00","00:10:00","00:20:00","00:40:00","01:30:00","03:00:00","04:00:00","08:00:00"];for(let i=0;i<e.length;i++){let n=document.createElement("option");n.text=e[i],t.appendChild(n)}return t}createButton(){let t=document.createElement("button");return t.textContent="Start",t.className="gb-btn",t.addEventListener("click",async()=>{let i=document.querySelector("select[name='farm-drop-down']").value;if(!this.isRunning){this.isRunning=!0,t.textContent="Stop";try{await this.autoFarm.start(i)}catch(n){console.error("Failed to start AutoFarm:",n),this.autoFarm.stop()}this.isRunning=!1,t.textContent="Start";return}this.autoFarm.stop(),this.isRunning=!1,t.textContent="Start"}),t}createAutoFarmDiv(){let t=document.createElement("div");return t.className="auto-farm gb-row",t}createFarmUI(){let t=document.createElement("section");t.className="gb-section";let e=this.createHeading(),i=document.createElement("p");i.className="gb-hint",i.textContent="Vyber interval vo formate HH:MM:SS. Po kazdom kole sa prida nahodny delay 5-30 sekund.";let n=document.createElement("p");n.className="gb-label",n.textContent="Interval farmenia (HH:MM:SS)";let a=this.createDropDown(),o=this.createButton(),s=this.createAutoFarmDiv();s.appendChild(a),s.appendChild(o),t.appendChild(e),t.appendChild(i),t.appendChild(n),t.appendChild(s),this.mainDiv.appendChild(t)}};var w=class{constructor(t,e){this.mainDiv=t,this.autoCulture=e,this.isRunning=!1}createHeading(){let t=document.createElement("h3");return t.textContent="Culture Planner",t.className="gb-section-title",t.style.color="#ffd77d",t}createDropDown(t,e){let i=document.createElement("select");i.setAttribute("name",e),i.className="gb-select";for(let n=0;n<t.length;n++){let a=document.createElement("option");a.text=t[n],i.appendChild(a)}return i}createMinutesInput(){let t=document.createElement("input");return t.type="number",t.min="1",t.step="1",t.value="60",t.placeholder="Interval (minutes)",t.setAttribute("name","culture-interval-minutes"),t.className="gb-input",t}createButton(){let t=document.createElement("button");return t.textContent="Start",t.className="gb-btn",t.addEventListener("click",async()=>{let e=document.querySelector("input[name='culture-interval-minutes']"),i=document.querySelector("select[name='option-drop-down']"),n=e.value,a=i.value;if(!this.isRunning){this.isRunning=!0,t.textContent="Stop";try{await this.autoCulture.start(a,n)}catch(o){console.error("Failed to start AutoCulture:",o),this.autoCulture.stop()}this.isRunning=!1,t.textContent="Start";return}this.autoCulture.stop(),this.isRunning=!1,t.textContent="Start"}),t}createAutoCultureDiv(t){let e=document.createElement("div");return e.className=t+" gb-row",e}createCultureUI(){let t=document.createElement("section");t.className="gb-section";let e=["Mestský festival","Olympijské hry","Víťazná procesia","Divadelné hry"],i=this.createHeading(),n=document.createElement("p");n.className="gb-hint",n.textContent="Zadaj interval v minutach. Kultura sa po spusteni opakuje kazdych X minut.";let a=document.createElement("p");a.className="gb-label",a.textContent="Typ oslavy";let o=document.createElement("p");o.className="gb-label",o.textContent="Interval opakovania (minuty)";let s=this.createDropDown(e,"option-drop-down"),r=this.createMinutesInput();r.placeholder="Napr. 60 min";let u=this.createButton(),p=this.createAutoCultureDiv("auto-culture-options"),c=this.createAutoCultureDiv("auto-culture-timer");p.appendChild(s),c.appendChild(r),c.appendChild(u),t.appendChild(i),t.appendChild(n),t.appendChild(a),t.appendChild(p),t.appendChild(o),t.appendChild(c),this.mainDiv.appendChild(t)}};var f=class{constructor(t,e){this.mainDiv=t,this.readOnlyInput=null,this.mappingsList=null,this.attackDodger=e,this.isRunning=!1}createHeading(){let t=document.createElement("h3");return t.textContent="AttackDodger",t.className="gb-section-title",t.style.color="#ff8f80",t}createStart(t){let e=document.createElement("button");return e.textContent=t,e.className="gb-btn",e.addEventListener("click",()=>{if(!this.isRunning){this.attackDodger.run(),this.isRunning=!0,e.textContent="Stop";return}this.attackDodger.stop(),this.isRunning=!1,e.textContent="Start"}),e}createSubmit(t){let e=document.createElement("button");return e.textContent=t,e.className="gb-btn gb-muted",e.addEventListener("click",()=>{let i=document.querySelector("#ui_box > div.town_name_area > div.town_groups_dropdown.btn_toggle_town_groups_menu > div.caption.js-viewport > div");if(!i)return;let n=document.getElementById("playerNameInput"),a=document.getElementById("townNameInput");if(!n||!a)return;let o=n.value,s=a.value;console.log(i.textContent+" is doding to"),console.log("Player Name:",o),console.log("Town Name:",s);let r={pname:o,tname:s};console.log(r);let u=JSON.stringify(r);localStorage.setItem(i.textContent,u),this.refreshDodgeInfo(),this.refreshMappingsList()}),e}createAutoDodgeeDiv(t){let e=document.createElement("div");return e.className=t,e}isJsonString(t){try{return JSON.parse(t),!0}catch(e){return!1}}refreshDodgeInfo(){if(!this.readOnlyInput)return;let t=document.querySelector("#ui_box > div.town_name_area > div.town_groups_dropdown.btn_toggle_town_groups_menu > div.caption.js-viewport > div");if(!t){this.readOnlyInput.value="";return}let e=localStorage.getItem(t.textContent);if(e===null||!this.isJsonString(e)){this.readOnlyInput.value="";return}let i=JSON.parse(e);this.readOnlyInput.value=i.tname+" : "+i.pname}getAllMappings(){let t=[];for(let e=0;e<localStorage.length;e++){let i=localStorage.key(e),n=localStorage.getItem(i);if(!n||!this.isJsonString(n))continue;let a=JSON.parse(n);!a||!a.tname||!a.pname||t.push({fromTown:i,toTown:a.tname,playerName:a.pname})}return t.sort((e,i)=>e.fromTown.localeCompare(i.fromTown)),t}refreshMappingsList(){if(!this.mappingsList)return;this.mappingsList.innerHTML="";let t=this.getAllMappings();if(t.length===0){let e=document.createElement("li");e.className="gb-mapping-item",e.textContent="No dodge routes saved yet.",this.mappingsList.appendChild(e);return}for(let e of t){let i=document.createElement("li");i.className="gb-mapping-item",i.textContent=e.fromTown+" -> "+e.toTown+" ("+e.playerName+")",this.mappingsList.appendChild(i)}}createDodgeUI(){let t=document.createElement("section");t.className="gb-section";let e=this.createHeading(),i=document.createElement("p");i.className="gb-hint",i.textContent="Nastav cielovu trasu pre aktualne mesto. Ulozene trasy uvidis nizsie v zozname.";let n=this.createStart("Start"),a=this.createSubmit("Submit"),o=document.createElement("input"),s=document.createElement("input");this.readOnlyInput=document.createElement("input"),o.type="text",s.type="text",o.className="gb-input",s.className="gb-input",this.readOnlyInput.type="text",this.readOnlyInput.readOnly=!0,this.readOnlyInput.className="gb-input gb-muted",this.refreshDodgeInfo(),this.mappingsList=document.createElement("ul"),this.mappingsList.className="gb-mapping-list";let r=document.createElement("h4");r.className="gb-section-title",r.style.marginTop="10px",r.style.fontSize="12px",r.style.color="#b8d7ff",r.textContent="Saved Dodge Routes";let u=document.createElement("p");u.className="gb-label",u.textContent="Hrac (kam sa bude uhybat)";let p=document.createElement("p");p.className="gb-label",p.textContent="Mesto ciela (nazov mesta)";let c=document.querySelector("#ui_box > div.town_name_area > div.btn_next_town.button_arrow.right"),g=document.querySelector("#ui_box > div.town_name_area > div.btn_prev_town.button_arrow.left");c&&c.addEventListener("click",()=>{this.refreshDodgeInfo(),this.refreshMappingsList()}),g&&g.addEventListener("click",()=>{this.refreshDodgeInfo(),this.refreshMappingsList()}),o.placeholder="Enter Player Name",s.placeholder="Enter Town Name",this.readOnlyInput.placeholder="Not set",o.setAttribute("id","playerNameInput"),s.setAttribute("id","townNameInput");let h=document.createElement("div");h.className="gb-row-full";let v=document.createElement("div");v.className="gb-row",v.appendChild(a),v.appendChild(n),h.appendChild(u),h.appendChild(o),h.appendChild(p),h.appendChild(s),h.appendChild(this.readOnlyInput),t.appendChild(e),t.appendChild(i),t.appendChild(h),t.appendChild(v),t.appendChild(r),t.appendChild(this.mappingsList),this.mainDiv.appendChild(t),this.refreshDodgeInfo(),this.refreshMappingsList()}};var y=class{constructor(t,e){this.mainDiv=t,this.autoSilverVault=e,this.isRunning=!1}createHeading(){let t=document.createElement("h3");return t.textContent="Silver Vault",t.className="gb-section-title",t.style.color="#9fd5ff",t}createInput(t,e,i){let n=document.createElement("input");return n.type="number",n.min="0",n.step="1",n.className="gb-input",n.setAttribute("name",t),n.placeholder=e,n.value=i,n}createButton(){let t=document.createElement("button");return t.textContent="Start",t.className="gb-btn",t.addEventListener("click",async()=>{let e=document.querySelector("input[name='silver-vault-keep']"),i=document.querySelector("input[name='silver-vault-store']"),n=document.querySelector("input[name='silver-vault-interval']");if(!this.isRunning){this.isRunning=!0,t.textContent="Stop";try{await this.autoSilverVault.start({keepAmount:e.value,storeAmount:i.value,intervalMinutes:n.value})}catch(a){console.error("Failed to start Silver Vault automation:",a),this.autoSilverVault.stop()}this.isRunning=!1,t.textContent="Start";return}this.autoSilverVault.stop(),this.isRunning=!1,t.textContent="Start"}),t}createSilverVaultUI(){let t=document.createElement("section");t.className="gb-section";let e=this.createHeading(),i=document.createElement("p");i.className="gb-hint",i.textContent="Zadaj hodnoty v striebre. Cyklus bezi podla intervalu v minutach + nahodny delay 30-300 sekund.";let n=document.createElement("p");n.className="gb-label",n.textContent="Ponechat v meste (striebra)";let a=this.createInput("silver-vault-keep","Napr. 15000 striebra","15000"),o=document.createElement("p");o.className="gb-label",o.textContent="Ulozit do jaskyne (striebra)";let s=this.createInput("silver-vault-store","Napr. 5000 striebra","5000"),r=document.createElement("p");r.className="gb-label",r.textContent="Interval opakovania (minuty)";let u=this.createInput("silver-vault-interval","Napr. 30 min","30");u.min="1";let p=this.createButton(),c=document.createElement("div");c.className="gb-row-full",c.appendChild(n),c.appendChild(a),c.appendChild(o),c.appendChild(s),c.appendChild(r),c.appendChild(u);let g=document.createElement("div");g.className="gb-row";let h=document.createElement("div");g.appendChild(h),g.appendChild(p),t.appendChild(e),t.appendChild(i),t.appendChild(c),t.appendChild(g),this.mainDiv.appendChild(t)}};var m=class{timeout(t){return new Promise(e=>setTimeout(e,t))}generateDelay(){return Math.floor(Math.random()*2310+2e3)}convertToSeconds(t){let[e,i,n]=t.split(":");return parseInt(e)*3600+parseInt(i)*60+parseInt(n)}waitForElementToAppear(t,e,i=100,n=10){return new Promise(a=>{let o=0,s=setInterval(()=>{o++;let r=document.querySelector(t);(r||o>=n)&&(clearInterval(s),r?(e&&e(r),a(r)):(console.warn(`Element not found: ${t}`),a(null)))},i)})}async clickWhenAvailable(t,e=100,i=20){let n=await this.waitForElementToAppear(t,null,e,i);return n?(n.click(),!0):!1}async waitFor(t,e){let n=0;for(;n<t;){if(typeof e=="function"&&!e())return;let a=Math.min(250,t-n);await this.timeout(a),n+=a}}};var l={dialogs:{closeButton:"body > div.ui-dialog.ui-corner-all.ui-widget.ui-widget-content.ui-front.ui-draggable.js-window-main-container > div.ui-dialog-titlebar.ui-corner-all.ui-widget-header.ui-helper-clearfix.ui-draggable-handle > button"},farm:{overviewLink:"#overviews_link_hover_menu > div.box.middle.left > div > div > ul > li.subsection.captain.enabled > ul > li.farm_town_overview > a",selectAll:"#fto_town_wrapper > div > div.game_header.bold > span.checkbox_wrapper > a",claimButton:"#fto_claim_button > div.caption.js-caption",confirmButton:".window_content.js-window-content > div > div.buttons > div.btn_confirm.button_new > div.caption.js-caption"},culture:{overviewLink:"#overviews_link_hover_menu > div.box.middle.left > div > div > ul > li.subsection.curator.enabled > ul > li.culture_overview > a",startAllButton:"#start_all_celebrations",celebrationSelect:"#place_celebration_select"},silverVault:{overviewLink:"#overviews_link_hover_menu > div.box.middle.left > div > div > ul > li.subsection.curator.enabled > ul > li.hides_overview > a",keepInput:"#hides_overview_all_towns_iron_keep > div.body > input[type=text]",storeInput:"#hides_overview_all_towns_iron_store > div.body > input[type=text]",confirmButton:"#store_iron_in_all_towns",closeAllWindows:"#ui_box > div.btn_close_all_windows > div.middle > div > div.box-middle > div"}};var _=class{constructor(){this.utils=new m,this.running=!1,this.seconds=0}async selectVillages(){let t=document.querySelector(l.farm.overviewLink);if(!t)throw new Error("Unable to open farm town overview.");function e(i){let n=new MouseEvent("click",{view:window,bubbles:!0,cancelable:!0});i.dispatchEvent(n)}e(t),await this.utils.timeout(200+this.utils.generateDelay())}async selectAll(){this.utils.waitForElementToAppear(l.farm.selectAll,t=>{t.click()}),await this.utils.timeout(947+this.utils.generateDelay())}async checkTime(t){t===300||t===1200||t===5400||t===14400?this.utils.waitForElementToAppear("#time_options_wrapper > div.time_options_default > div.fto_time_checkbox.fto_"+t+"> a",e=>{e.click()}):this.utils.waitForElementToAppear("#time_options_wrapper > div.time_options_loyalty > div.fto_time_checkbox.fto_"+t+" > a",e=>{e.click()}),await this.utils.timeout(1550+this.utils.generateDelay())}async collect(){this.utils.waitForElementToAppear(l.farm.claimButton,t=>{t.click()}),await this.utils.timeout(2200)}async confirm(){this.utils.waitForElementToAppear(l.farm.confirmButton,t=>{t.click()}),await this.utils.timeout(2188+this.utils.generateDelay())}async close(){this.utils.waitForElementToAppear(l.dialogs.closeButton,t=>{t.click()}),await this.utils.timeout(1205+this.utils.generateDelay())}async repeatFarm(){await this.selectVillages(),await this.selectAll(),await this.checkTime(this.seconds),await this.collect(),await this.confirm(),await this.close(),console.log("Collecting is finished")}async start(t){if(this.running){console.warn("AutoFarm is already running.");return}let e=this.utils.convertToSeconds(t);if(!e||e<1)throw new Error("Invalid farming interval.");for(this.seconds=e,this.running=!0;this.running;){try{await this.repeatFarm()}catch(n){console.error("AutoFarm cycle failed:",n)}let i=this.seconds*1e3+Math.floor(Math.random()*25e3+5e3);await this.utils.waitFor(i,()=>this.running)}}stop(){this.running=!1}};var x=class{constructor(){this.utils=new m,this.running=!1,this.intervalMinutes=0}async selectOverview(){this.utils.waitForElementToAppear(l.culture.overviewLink,t=>{t.click()}),await this.utils.timeout(658+this.utils.generateDelay())}async confirm(){this.utils.waitForElementToAppear(l.culture.startAllButton,t=>{t.click()}),await this.utils.timeout(1001+this.utils.generateDelay())}async close(){this.utils.waitForElementToAppear(l.dialogs.closeButton,t=>{t.click()}),await this.utils.timeout(1488+this.utils.generateDelay())}async selectOption(t){let e=1;switch(t){case"Mestský festival":e=1;break;case"Olympijské hry":e=2;break;case"Víťazná procesia":e=3;break;case"Divadelné hry":e=4;break}this.utils.waitForElementToAppear(l.culture.celebrationSelect,i=>{i.click()}),await this.utils.timeout(1488+this.utils.generateDelay()),this.utils.waitForElementToAppear("#place_celebration_select_list > div > div:nth-child("+e+")",i=>{i.click()}),await this.utils.timeout(1488+this.utils.generateDelay())}async repeatCulture(t){await this.selectOverview(),await this.selectOption(t),await this.confirm(),await this.close(),console.log("Culture celebration started.")}async start(t,e){if(this.running){console.warn("AutoCulture is already running.");return}let i=Number.parseInt(e,10);if(!Number.isFinite(i)||i<1)throw new Error("Invalid culture interval in minutes.");for(this.intervalMinutes=i,this.running=!0;this.running;){try{await this.repeatCulture(t)}catch(a){console.error("AutoCulture cycle failed:",a)}let n=this.intervalMinutes*60*1e3;await this.utils.waitFor(n,()=>this.running)}}stop(){this.running=!1}};var E=class{constructor(){this.utils=new m,this.attackCount=0,this.running=!1,this.mutationObserver=null,this.pendingDodges=[]}async getListOfAttacks(){this.utils.waitForElementToAppear("#toolbar_activity_commands",t=>{t.click()}),await this.utils.timeout(3877+this.utils.generateDelay()),await this.getIncomingAttacks()}async parseTimeAndTown(t){let e=t.children[1].children[3].innerHTML;console.log(e);let i=t.children[7].innerHTML;console.log(i);let[n,a,o]=i.split(":").map(Number),s=n*3600+a*60+o;console.log(s);let r=Math.max(s*1e3-4e4,0),u=setTimeout(async()=>{this.running&&await this.makeDodge(e)},r);this.pendingDodges.push(u)}async villagerDef(){this.utils.waitForElementToAppear("#ui_box > div.topleft_navigation_area > div.bull_eye_buttons > div.rb_map > div.option.city_overview.circle_button.js-option",t=>{t.click()}),await this.utils.timeout(300+this.utils.generateDelay()),this.utils.waitForElementToAppear("#building_main_area_farm",t=>{t.click()}),await this.utils.timeout(300+this.utils.generateDelay()),this.utils.waitForElementToAppear("#request_militia_button > span.left > span > span",t=>{t.click()}),await this.utils.timeout(300+this.utils.generateDelay()),this.utils.waitForElementToAppear("div > div.window_content.js-window-content > div > div.buttons > div.btn_confirm.button_new",t=>{t.click()})}async sendAllUnits(){this.utils.waitForElementToAppear("div > form > div.town_units_wrapper > div > div.unit_wrapper > div.naval_units.clearfix > div",()=>{let t=document.querySelectorAll("div > form > div.town_units_wrapper > div > div.unit_wrapper > div.naval_units.clearfix > div");for(let e of t)e.childNodes[1].click()}),await this.utils.timeout(1488+this.utils.generateDelay()),this.utils.waitForElementToAppear("div > form > div.button_wrapper > a > span.left > span > span",t=>{t.click()}),await this.utils.timeout(1488+this.utils.generateDelay()),this.utils.waitForElementToAppear("div > form > div.town_units_wrapper > div > div.unit_wrapper > div.ground_units.clearfix > div",()=>{let t=document.querySelectorAll("div > form > div.town_units_wrapper > div > div.unit_wrapper > div.ground_units.clearfix > div");for(let e of t)e.childNodes[1].click()}),await this.utils.timeout(1488+this.utils.generateDelay()),this.utils.waitForElementToAppear("div > form > div.button_wrapper > a > span.left > span > span",t=>{t.click()}),await this.utils.timeout(1e4+this.utils.generateDelay())}async closeAll(){let t=document.querySelectorAll("body > div.ui-dialog.ui-corner-all.ui-widget.ui-widget-content.ui-front.ui-draggable.ui-resizable.js-window-main-container > div.ui-dialog-titlebar.ui-corner-all.ui-widget-header.ui-helper-clearfix.ui-draggable-handle > button");for(let i of t)i.click();await this.utils.timeout(200+this.utils.generateDelay());let e=document.querySelectorAll("body > div > div.ui-dialog-titlebar.ui-corner-all.ui-widget-header.ui-helper-clearfix.ui-draggable-handle > button");for(let i of e)i.click()}simulateHover(t){let e=new MouseEvent("mouseover",{bubbles:!0,cancelable:!0,view:window});t.dispatchEvent(e)}async cancelSendingUnits(){console.log("canceling");let t=document.querySelector("#ui_box > div.tb_activities.toolbar_activities > div.middle > div:nth-child(5) > div.activity.commands > div.hover_state");this.simulateHover(t);let e=document.querySelectorAll("div > div.button_new.square.remove.js-delete.cancelable");for(let i of e)i.click();await this.utils.timeout(888+this.utils.generateDelay())}async makeDodge(t){console.log("Hello i was called after 10 seconds");let e=localStorage.getItem(t);if(!e){console.warn(`No dodge target configured for town: ${t}`);return}let i=JSON.parse(e);await this.utils.timeout(1488+this.utils.generateDelay()),this.utils.waitForElementToAppear("#ui_box > div.town_name_area > div.town_groups_dropdown.btn_toggle_town_groups_menu > div.caption.js-viewport",a=>{a.click()}),await this.utils.timeout(1488+this.utils.generateDelay());let n=(a,o)=>{let s=document.querySelectorAll(o);for(let r of s)if(r.innerText===a)return r;return null};await this.utils.timeout(1488+this.utils.generateDelay()),this.utils.waitForElementToAppear("#town_groups_list > div.content.js-dropdown-item-list.town_groups_list > div.town_group.town_group_-1.selected > div.group_towns.ui-droppable > div > span",()=>{let a=n(t,"#town_groups_list > div.content.js-dropdown-item-list.town_groups_list > div.town_group.town_group_-1.selected > div.group_towns.ui-droppable > div > span");console.log(a),a.click()}),await this.villagerDef(),await this.utils.timeout(200+this.utils.generateDelay()),this.utils.waitForElementToAppear("#ui_box > div.nui_main_menu > div.middle > div.content > ul > li.ranking.main_menu_item",a=>{a.click()}),await this.utils.timeout(1488+this.utils.generateDelay()),this.utils.waitForElementToAppear("#player_name",a=>{console.log(i),a.value=i.pname}),await this.utils.timeout(1488+this.utils.generateDelay()),this.utils.waitForElementToAppear("#ranking_search > a.button > span.left > span > span",a=>{a.click()}),await this.utils.timeout(1488+this.utils.generateDelay()),this.utils.waitForElementToAppear("#ranking_inner > tr.game_table_even.bottom > td.r_name > a",a=>{a.click()}),await this.utils.timeout(1488+this.utils.generateDelay()),this.utils.waitForElementToAppear("#player_towns > div > ul > li > a",()=>{let a=document.querySelectorAll("#player_towns > div > ul > li > a");console.log(a);for(let o of a)console.log(o.innerText),o.innerText===i.tname&&o.click()}),await this.utils.timeout(1488+this.utils.generateDelay()),this.utils.waitForElementToAppear("#support",a=>{a.click()}),await this.utils.timeout(1488+this.utils.generateDelay()),await this.sendAllUnits(),await this.cancelSendingUnits(),await this.closeAll()}filterAttacks(t){let e=t.documentElement;for(let i=0;i<e.children.length;i++){let n=e.children[i];if(n.tagName==="BODY")for(let a=0;a<n.children.length;a++){let o=n.children[a],s=o.attributes[2].value;(s==="attack_land"||s==="attack_sea")&&(console.log(o),console.log(o.children[0].children[1].children[2].attributes[0].value),o.children[0].children[1].children[2].attributes[0].value==="overview_outgoing icon"&&this.parseTimeAndTown(o.children[0]))}}}async getIncomingAttacks(){this.utils.waitForElementToAppear("#command_overview",r=>{r.click()});let t=document.querySelector("#command_overview");console.log(t.innerHTML);let e=new DOMParser().parseFromString(t.innerHTML,"text/html");console.log(e),this.filterAttacks(e);let i=new Date,n=i.getDay(),a=i.getHours(),o=i.getMinutes(),s=i.getSeconds();console.log(n+":"+a+":"+o+":"+s)}run(){if(this.running){console.warn("AttackDodger is already running.");return}this.running=!0;let t=document.querySelector("#ui_box > div.tb_activities.toolbar_activities > div.middle > div:nth-child(1) > div.activity.attack_indicator > div.hover_state > div > div");if(!t){console.warn("Attack indicator not found."),this.running=!1;return}t.innerText!==""&&(this.attackCount=parseInt(t.innerText),console.log("Attack count: "+this.attackCount)),this.mutationObserver=new MutationObserver(i=>{this.running&&setTimeout(()=>{!this.running||i.length<3||!i[2].addedNodes[1]||i[2].type==="childList"&&(parseInt(i[2].addedNodes[1].childNodes[1].firstElementChild.innerText)>this.attackCount?(this.attackCount++,console.log("Attack detected"),this.getListOfAttacks()):parseInt(i[2].addedNodes[1].childNodes[1].firstElementChild.innerText)<this.attackCount?(this.attackCount--,console.log("Attack canceled")):(this.attackCount=0,console.log("No Attacks")))},5e3)});let e=document.querySelector("#ui_box > div.tb_activities.toolbar_activities > div.middle > div:nth-child(1) > div.activity.attack_indicator");if(!e){console.warn("Activity container not found."),this.running=!1;return}this.mutationObserver.observe(e,{childList:!0,subtree:!0,attributes:!0})}stop(){this.running=!1,this.mutationObserver&&(this.mutationObserver.disconnect(),this.mutationObserver=null);for(let t of this.pendingDodges)clearTimeout(t);this.pendingDodges=[]}};var k=class{constructor(){this.utils=new m,this.running=!1,this.keepAmount=0,this.storeAmount=0,this.intervalMinutes=0}randomBetween(t,e){return Math.floor(Math.random()*(e-t+1)+t)}async applyHumanDelay(){await this.utils.timeout(350+this.utils.generateDelay())}async openOverview(){let t=await this.utils.waitForElementToAppear(l.silverVault.overviewLink,null,100,20);if(!t)throw new Error("Unable to open silver vault overview.");t.click(),await this.applyHumanDelay()}setInputValue(t,e){t.focus(),t.value=String(e),t.dispatchEvent(new Event("input",{bubbles:!0})),t.dispatchEvent(new Event("change",{bubbles:!0})),t.blur()}async setKeepAmount(){let t=await this.utils.waitForElementToAppear(l.silverVault.keepInput,null,100,30);if(!t)throw new Error("Keep amount input not found.");this.setInputValue(t,this.keepAmount),await this.applyHumanDelay()}async setStoreAmount(){let t=await this.utils.waitForElementToAppear(l.silverVault.storeInput,null,100,30);if(!t)throw new Error("Store amount input not found.");this.setInputValue(t,this.storeAmount),await this.applyHumanDelay()}async confirmStore(){if(!await this.utils.clickWhenAvailable(l.silverVault.confirmButton,100,20))throw new Error("Silver vault confirm button not found.");await this.applyHumanDelay()}async closeAllWindows(){await this.utils.clickWhenAvailable(l.silverVault.closeAllWindows,100,20),await this.applyHumanDelay()}async runOnce(){await this.openOverview(),await this.setKeepAmount(),await this.setStoreAmount(),await this.confirmStore(),await this.closeAllWindows()}async start({keepAmount:t,storeAmount:e,intervalMinutes:i}){if(this.running){console.warn("AutoSilverVault is already running.");return}let n=Number.parseInt(t,10),a=Number.parseInt(e,10),o=Number.parseInt(i,10);if(!Number.isFinite(n)||n<0)throw new Error("Invalid keep amount.");if(!Number.isFinite(a)||a<0)throw new Error("Invalid store amount.");if(!Number.isFinite(o)||o<1)throw new Error("Invalid interval in minutes.");for(this.keepAmount=n,this.storeAmount=a,this.intervalMinutes=o,this.running=!0;this.running;){try{await this.runOnce()}catch(p){console.error("AutoSilverVault cycle failed:",p)}let s=this.intervalMinutes*60*1e3,r=this.randomBetween(30,300),u=s+r*1e3;await this.utils.waitFor(u,()=>this.running)}}stop(){this.running=!1}};var C=class{constructor(){if(this.panel=document.getElementsByClassName("ui_construction_queue instant_buy")[0],!this.panel||!this.panel.parentNode)throw new Error("Unable to mount GrepolisBot UI panel.");this.autoFarm=new _,this.autoCulture=new x,this.attackDodger=new E,this.autoSilverVault=new k,this.injectStyles(),this.createMainDiv(),this.addDragFunctionality(),this.createAutoFarmUI()}injectStyles(){if(document.getElementById("grepolisbot-theme"))return;let t=document.createElement("style");t.id="grepolisbot-theme",t.textContent=`
+      [name="bot-main-div"] {
+        position: absolute;
+        left: 12px;
+        top: 12px;
+        width: 340px;
+        max-height: 78vh;
+        overflow-y: auto;
+        z-index: 1000;
+        border-radius: 16px;
+        border: 1px solid rgba(255, 255, 255, 0.22);
+        background:
+          radial-gradient(circle at 0% 0%, rgba(244, 170, 78, 0.22), transparent 45%),
+          radial-gradient(circle at 100% 0%, rgba(41, 93, 151, 0.22), transparent 48%),
+          linear-gradient(160deg, rgba(15, 25, 44, 0.9), rgba(10, 14, 27, 0.92));
+        box-shadow: 0 16px 45px rgba(6, 10, 22, 0.55);
+        backdrop-filter: blur(7px);
+        box-sizing: border-box;
+        padding: 12px;
+        font-family: "Trebuchet MS", "Segoe UI", sans-serif;
+        color: #eef3ff;
       }
 
-      return null;
-    };
-
-    await this.utils.timeout(1488 + this.utils.generateDelay());
-    // click town name
-    this.utils.waitForElementToAppear(
-      "#town_groups_list > div.content.js-dropdown-item-list.town_groups_list > div.town_group.town_group_-1.selected > div.group_towns.ui-droppable > div > span",
-      () => {
-        const foundDiv = findDivByInnerText(
-          dodgeFromTown,
-          "#town_groups_list > div.content.js-dropdown-item-list.town_groups_list > div.town_group.town_group_-1.selected > div.group_towns.ui-droppable > div > span"
-        );
-        console.log(foundDiv);
-        foundDiv.click();
+      .gb-drag-handle {
+        cursor: move;
+        user-select: none;
+        border-radius: 12px;
+        border: 1px solid rgba(243, 194, 94, 0.45);
+        background: linear-gradient(120deg, rgba(216, 137, 58, 0.3), rgba(53, 104, 163, 0.26));
+        padding: 9px 12px;
+        margin-bottom: 12px;
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+        font-size: 12px;
+        font-weight: 700;
       }
-    );
 
-    await this.villagerDef();
-
-    await this.utils.timeout(200 + this.utils.generateDelay());
-
-    // click raned
-
-    this.utils.waitForElementToAppear(
-      "#ui_box > div.nui_main_menu > div.middle > div.content > ul > li.ranking.main_menu_item",
-      (element) => {
-        element.click();
+      .gb-easter-egg {
+        display: none;
+        margin: -6px 0 10px;
+        font-size: 11px;
+        color: #ffe9b8;
+        text-align: right;
       }
-    );
 
-    await this.utils.timeout(1488 + this.utils.generateDelay());
-
-    this.utils.waitForElementToAppear("#player_name", (element) => {
-      console.log(dodgeObj);
-      element.value = dodgeObj.pname;
-    });
-
-    await this.utils.timeout(1488 + this.utils.generateDelay());
-
-    this.utils.waitForElementToAppear(
-      "#ranking_search > a.button > span.left > span > span",
-      (element) => {
-        element.click();
+      .gb-easter-egg.visible {
+        display: block;
       }
-    );
 
-    await this.utils.timeout(1488 + this.utils.generateDelay());
-
-    this.utils.waitForElementToAppear(
-      "#ranking_inner > tr.game_table_even.bottom > td.r_name > a",
-      (element) => {
-        element.click();
+      .gb-tabs {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 8px;
+        margin-bottom: 10px;
       }
-    );
 
-    await this.utils.timeout(1488 + this.utils.generateDelay());
-
-    this.utils.waitForElementToAppear(
-      "#player_towns > div > ul > li > a",
-      () => {
-        const elements = document.querySelectorAll(
-          "#player_towns > div > ul > li > a"
-        );
-        console.log(elements);
-        for (const element of elements) {
-          console.log(element.innerText);
-          if (element.innerText === dodgeObj.tname) {
-            element.click();
-          }
-        }
+      .gb-tab {
+        border: 1px solid rgba(255, 255, 255, 0.25);
+        border-radius: 10px;
+        background: rgba(10, 23, 45, 0.55);
+        color: #eaf0ff;
+        padding: 7px 10px;
+        font-weight: 700;
+        font-size: 12px;
+        cursor: pointer;
       }
-    );
 
-    await this.utils.timeout(1488 + this.utils.generateDelay());
-
-    this.utils.waitForElementToAppear("#support", (element) => {
-      element.click();
-    });
-
-    await this.utils.timeout(1488 + this.utils.generateDelay());
-
-    await this.sendAllUnits();
-    await this.cancelSendingUnits();
-    await this.closeAll();
-  }
-
-  filterAttacks(doc) {
-    const rootElement = doc.documentElement;
-
-    for (let i = 0; i < rootElement.children.length; i++) {
-      const childElement = rootElement.children[i];
-
-      if (childElement.tagName === "BODY") {
-        for (let j = 0; j < childElement.children.length; j++) {
-          const childElementList = childElement.children[j];
-          let type = childElementList.attributes[2].value;
-          if (type === "attack_land" || type === "attack_sea") {
-            console.log(childElementList);
-            console.log(
-              childElementList.children[0].children[1].children[2].attributes[0]
-                .value
-            );
-            if (
-              childElementList.children[0].children[1].children[2].attributes[0]
-                .value === "overview_outgoing icon"
-            ) {
-              this.parseTimeAndTown(childElementList.children[0]);
-            }
-          }
-        }
+      .gb-tab.active {
+        border-color: rgba(243, 194, 94, 0.55);
+        background: linear-gradient(150deg, rgba(244, 160, 61, 0.35), rgba(204, 111, 42, 0.3));
+        color: #fff6e8;
       }
-    }
-  }
 
-  async getIncomingAttacks() {
-    this.utils.waitForElementToAppear("#command_overview", (element) => {
-      element.click();
-    });
-    //await this.utils.timeout(3877 + this.utils.generateDelay());
-    let content = document.querySelector("#command_overview");
-    console.log(content.innerHTML);
-    let myDoc = new DOMParser().parseFromString(content.innerHTML, "text/html");
-    console.log(myDoc);
-    this.filterAttacks(myDoc);
-
-    const now = new Date();
-    const day = now.getDay(); // returns a number representing the day of the week, starting with 0 for Sunday
-    const hours = now.getHours();
-    const minutes = now.getMinutes();
-    const seconds = now.getSeconds();
-    console.log(day + ":" + hours + ":" + minutes + ":" + seconds);
-  }
-
-  run() {
-    const attackCount = document.querySelector(
-      "#ui_box > div.tb_activities.toolbar_activities > div.middle > div:nth-child(1) > div.activity.attack_indicator > div.hover_state > div > div"
-    );
-
-    if (attackCount.innerText !== "") {
-      this.attackCount = parseInt(attackCount.innerText);
-      console.log("Attack count: " + this.attackCount);
-    }
-
-    const mutationObserver = new MutationObserver((mutations) => {
-      setTimeout(() => {
-        if (mutations[2].type === "childList") {
-          if (
-            parseInt(
-              mutations[2].addedNodes[1].childNodes[1].firstElementChild
-                .innerText
-            ) > this.attackCount
-          ) {
-            this.attackCount++;
-            console.log("Attack detected");
-            this.getListOfAttacks();
-          } else if (
-            parseInt(
-              mutations[2].addedNodes[1].childNodes[1].firstElementChild
-                .innerText
-            ) < this.attackCount
-          ) {
-            this.attackCount--;
-            console.log("Attack canceled");
-          } else {
-            this.attackCount = 0;
-            console.log("No Attacks");
-          }
-        }
-      }, 5000);
-    });
-
-    const activity = document.querySelector(
-      "#ui_box > div.tb_activities.toolbar_activities > div.middle > div:nth-child(1) > div.activity.attack_indicator"
-    );
-
-    mutationObserver.observe(activity, {
-      childList: true,
-      subtree: true,
-      attributes: true,
-    });
-  }
-}
-"use strict";
-class DodgeUI {
-  constructor(mainDiv) {
-    this.mainDiv = mainDiv;
-    this.readOnlyInput = null;
-  }
-
-  createHeading() {
-    const heading = document.createElement("h3");
-    heading.textContent = "AttackDodger";
-    heading.style.color = "Red";
-    return heading;
-  }
-
-  createStart(text) {
-    const button = document.createElement("button");
-    button.textContent = text;
-
-    button.addEventListener("click", function () {
-      let ad = new AttackDodger();
-      ad.run();
-    });
-
-    return button;
-  }
-
-  createSubmit(text) {
-    const button = document.createElement("button");
-    button.textContent = text;
-
-    button.addEventListener("click", function () {
-      const townNameSelector = document.querySelector(
-        "#ui_box > div.town_name_area > div.town_groups_dropdown.btn_toggle_town_groups_menu > div.caption.js-viewport > div"
-      );
-
-      const playerNameInput = document.getElementById("playerNameInput");
-      const townNameInput = document.getElementById("townNameInput");
-
-      const playerName = playerNameInput.value;
-      const townName = townNameInput.value;
-
-      console.log(townNameSelector.textContent + " is doding to");
-      console.log("Player Name:", playerName);
-      console.log("Town Name:", townName);
-
-      const dodgeObj = { pname: playerName, tname: townName };
-      console.log(dodgeObj);
-      const dodgeObjString = JSON.stringify(dodgeObj);
-      localStorage.setItem(townNameSelector.textContent, dodgeObjString);
-    });
-
-    return button;
-  }
-
-  createAutoDodgeeDiv(name) {
-    const autoDodgeDiv = document.createElement("div");
-    autoDodgeDiv.className = name;
-    return autoDodgeDiv;
-  }
-
-  isJsonString(str) {
-    try {
-      JSON.parse(str);
-      return true;
-    } catch (e) {
-      return false;
-    }
-  }
-
-  refreshDodgeInfo() {
-    const townNameSelector = document.querySelector(
-      "#ui_box > div.town_name_area > div.town_groups_dropdown.btn_toggle_town_groups_menu > div.caption.js-viewport > div"
-    );
-
-    let item = localStorage.getItem(townNameSelector.textContent);
-    if (item === null || !this.isJsonString(item)) {
-      this.readOnlyInput.value = "";
-      return;
-    }
-    let dodgeObj = JSON.parse(item);
-
-    this.readOnlyInput.value = dodgeObj.tname + " : " + dodgeObj.pname;
-  }
-
-  createDodgeUI() {
-    const heading = this.createHeading();
-
-    const startDodging = this.createStart("Start");
-    startDodging.style.display = "block";
-    startDodging.style.justifyContent = "center";
-    startDodging.style.margin = "auto";
-
-    const submit = this.createSubmit("Submit");
-
-    const playerNameInput = document.createElement("input");
-    const townNameInput = document.createElement("input");
-    this.readOnlyInput = document.createElement("input");
-
-    // Set attributes for the input elements
-    playerNameInput.type = "text";
-    townNameInput.type = "text";
-
-    this.readOnlyInput.type = "text";
-    this.readOnlyInput.readOnly = true;
-    this.refreshDodgeInfo();
-
-    const arrowRight = document.querySelector(
-      "#ui_box > div.town_name_area > div.btn_next_town.button_arrow.right"
-    );
-
-    const arrowLeft = document.querySelector(
-      "#ui_box > div.town_name_area > div.btn_prev_town.button_arrow.left"
-    );
-
-    arrowRight.addEventListener("click", () => {
-      this.refreshDodgeInfo();
-    });
-
-    arrowLeft.addEventListener("click", () => {
-      this.refreshDodgeInfo();
-    });
-
-    // Placeholder text for the inputs
-    playerNameInput.placeholder = "Enter Player Name";
-    townNameInput.placeholder = "Enter Town Name";
-    this.readOnlyInput.placeholder = "Not set";
-
-    this.mainDiv.appendChild(heading);
-
-    submit.style.margin = "auto";
-    submit.style.display = "block";
-    submit.style.justifyContent = "center";
-
-    playerNameInput.setAttribute("id", "playerNameInput");
-    townNameInput.setAttribute("id", "townNameInput");
-
-    // Append the inputs to the mainDiv
-    this.mainDiv.appendChild(playerNameInput);
-    this.mainDiv.appendChild(townNameInput);
-    this.mainDiv.appendChild(submit);
-    this.mainDiv.appendChild(this.readOnlyInput);
-
-    const buttonContainer = document.createElement("div");
-    buttonContainer.className = "button-container";
-    buttonContainer.appendChild(startDodging);
-    this.mainDiv.appendChild(buttonContainer);
-  }
-}
-"use strict";
-class CultureUI {
-  constructor(mainDiv) {
-    this.mainDiv = mainDiv;
-  }
-
-  createHeading() {
-    const heading = document.createElement("h3");
-    heading.textContent = "AutoCulture";
-    heading.style.color = "Yellow";
-    return heading;
-  }
-
-  createDropDown(optionValues, name) {
-    const dropDown = document.createElement("select");
-    dropDown.setAttribute("name", name);
-
-    for (let i = 0; i < optionValues.length; i++) {
-      const option = document.createElement("option");
-      option.text = optionValues[i];
-      dropDown.appendChild(option);
-    }
-
-    return dropDown;
-  }
-
-  createButton() {
-    const button = document.createElement("button");
-    button.textContent = "Start";
-
-    button.addEventListener("click", function () {
-      let ac = new AutoCulture();
-      const dropDown = document.querySelector(
-        "select[name='culture-drop-down']"
-      );
-      const optDropDown = document.querySelector(
-        "select[name='option-drop-down']"
-      );
-      const selectedValue = dropDown.value;
-      const selectedOption = optDropDown.value;
-      console.log(selectedOption);
-      ac.run(selectedOption, selectedValue);
-    });
-
-    return button;
-  }
-
-  createAutoCultureDiv(name) {
-    const autoFarmDiv = document.createElement("div");
-    autoFarmDiv.className = name;
-    return autoFarmDiv;
-  }
-
-  createCultureUI() {
-    const optionValues = [
-      "Mestský festival",
-      "Olympijské hry",
-      "Víťazná procesia",
-      "Divadelné hry",
-    ];
-
-    const optionValues1 = [
-      "01:00:00",
-      "02:00:00",
-      "04:00:00",
-      "08:00:00",
-      "10:00:00",
-      "11:00:00",
-      "12:00:00",
-    ];
-
-    const heading = this.createHeading();
-    const dropDown = this.createDropDown(optionValues, "option-drop-down");
-    const dropDown1 = this.createDropDown(optionValues1, "culture-drop-down");
-    const button = this.createButton();
-    const autoCultureDiv = this.createAutoCultureDiv("auto-culture-options");
-    const autoCultureDiv1 = this.createAutoCultureDiv("auto-culture-timer");
-
-    autoCultureDiv.appendChild(dropDown);
-
-    autoCultureDiv1.appendChild(dropDown1);
-    autoCultureDiv1.appendChild(button);
-
-    this.mainDiv.appendChild(heading);
-    this.mainDiv.appendChild(autoCultureDiv);
-    this.mainDiv.appendChild(autoCultureDiv1);
-  }
-}
-"use strict";
-class FarmUI {
-  constructor(mainDiv) {
-    this.mainDiv = mainDiv;
-  }
-
-  createHeading() {
-    const heading = document.createElement("h3");
-    heading.textContent = "AutoFarm";
-    heading.style.color = "green";
-    return heading;
-  }
-
-  createDropDown() {
-    const dropDown = document.createElement("select");
-    dropDown.setAttribute("name", "farm-drop-down");
-
-    const optionValues = [
-      "00:05:00",
-      "00:10:00",
-      "00:20:00",
-      "00:40:00",
-      "01:30:00",
-      "03:00:00",
-      "04:00:00",
-      "08:00:00",
-    ];
-
-    for (let i = 0; i < optionValues.length; i++) {
-      const option = document.createElement("option");
-      option.text = optionValues[i];
-      dropDown.appendChild(option);
-    }
-
-    return dropDown;
-  }
-
-  createButton() {
-    const button = document.createElement("button");
-    button.textContent = "Start";
-
-    button.addEventListener("click", function () {
-      let af = new AutoFarm();
-      const dropDown = document.querySelector("select[name='farm-drop-down']");
-      const selectedValue = dropDown.value;
-      af.run(selectedValue);
-    });
-
-    return button;
-  }
-
-  createAutoFarmDiv() {
-    const autoFarmDiv = document.createElement("div");
-    autoFarmDiv.className = "auto-farm";
-    return autoFarmDiv;
-  }
-
-  createFarmUI() {
-    const heading = this.createHeading();
-    const dropDown = this.createDropDown();
-    const button = this.createButton();
-    const autoFarmDiv = this.createAutoFarmDiv();
-
-    autoFarmDiv.appendChild(dropDown);
-    autoFarmDiv.appendChild(button);
-
-    this.mainDiv.appendChild(heading);
-    this.mainDiv.appendChild(autoFarmDiv);
-  }
-}
-"use strict";
-
-class MainUI {
-  constructor() {
-    this.panel = document.getElementsByClassName(
-      "ui_construction_queue instant_buy"
-    )[0];
-    this.createMainDiv();
-    this.addDragFunctionality();
-    this.createAutoFarmUI();
-  }
-
-  createMainDiv() {
-    this.mainDiv = document.createElement("div");
-    this.mainDiv.setAttribute("name", "bot-main-div");
-    this.mainDiv.style.position = "absolute";
-    this.mainDiv.style.left = "0px";
-    this.mainDiv.style.top = "0px";
-    this.mainDiv.style.width = "300px";
-    this.mainDiv.style.height = "500px";
-    this.mainDiv.style.backgroundColor = "rgba(0, 0, 10, 0.5)";
-    this.mainDiv.style.zIndex = "1000";
-    this.mainDiv.style.borderRadius = "10px";
-    let parentDiv = this.panel.parentNode;
-    parentDiv.insertBefore(this.mainDiv, this.panel);
-  }
-
-  addDragFunctionality() {
-    let isDragging = false;
-    let dragOffsetX = 0;
-    let dragOffsetY = 0;
-
-    const startDrag = (event) => {
-      isDragging = true;
-      dragOffsetX = event.clientX - this.mainDiv.offsetLeft;
-      dragOffsetY = event.clientY - this.mainDiv.offsetTop;
-    };
-
-    const endDrag = () => {
-      isDragging = false;
-    };
-
-    const drag = (event) => {
-      if (isDragging) {
-        this.mainDiv.style.left = event.clientX - dragOffsetX + "px";
-        this.mainDiv.style.top = event.clientY - dragOffsetY + "px";
+      .gb-page {
+        display: block;
       }
-    };
 
-    this.mainDiv.addEventListener("mousedown", startDrag);
-    this.mainDiv.addEventListener("mouseup", endDrag);
-    this.mainDiv.addEventListener("mousemove", drag);
-  }
+      .gb-page.hidden {
+        display: none;
+      }
 
-  createAutoFarmUI() {
-    let farm = new FarmUI(this.mainDiv);
-    farm.createFarmUI();
-    let culture = new CultureUI(this.mainDiv);
-    culture.createCultureUI();
-    let dodge = new DodgeUI(this.mainDiv);
-    dodge.createDodgeUI();
-  }
-}
-"use strict";
+      .gb-section {
+        border: 1px solid rgba(255, 255, 255, 0.14);
+        background: linear-gradient(150deg, rgba(255, 255, 255, 0.08), rgba(255, 255, 255, 0.03));
+        border-radius: 12px;
+        padding: 10px;
+        margin-bottom: 10px;
+      }
 
-(function () {
-  window.addEventListener("load", function () {
-    setTimeout(function () {
-      new MainUI();
-    }, 2000); // 2000 milliseconds = 2 seconds delay
-  });
-})();
+      .gb-section-title {
+        font-size: 14px;
+        margin: 0 0 8px;
+        letter-spacing: 0.03em;
+      }
+
+      .gb-hint {
+        margin: 0 0 8px;
+        font-size: 11px;
+        line-height: 1.35;
+        color: #c4d8ff;
+      }
+
+      .gb-label {
+        margin: 2px 0 4px;
+        font-size: 11px;
+        color: #e0ecff;
+        letter-spacing: 0.02em;
+      }
+
+      .gb-row {
+        display: grid;
+        grid-template-columns: 1fr auto;
+        gap: 8px;
+        margin-bottom: 8px;
+      }
+
+      .gb-row-full {
+        display: grid;
+        gap: 8px;
+      }
+
+      .gb-select,
+      .gb-input {
+        border: 1px solid rgba(224, 234, 255, 0.35);
+        border-radius: 8px;
+        background: rgba(3, 13, 31, 0.56);
+        color: #eff4ff;
+        padding: 7px 9px;
+        font-size: 13px;
+      }
+
+      .gb-input::placeholder {
+        color: rgba(220, 230, 255, 0.55);
+      }
+
+      .gb-btn {
+        border: 1px solid rgba(255, 224, 158, 0.45);
+        border-radius: 8px;
+        background: linear-gradient(150deg, #f4a03d, #cc6f2a);
+        color: #11203b;
+        font-weight: 700;
+        padding: 7px 11px;
+        min-width: 74px;
+        cursor: pointer;
+      }
+
+      .gb-btn:hover {
+        filter: brightness(1.05);
+      }
+
+      .gb-muted {
+        border: 1px solid rgba(168, 203, 255, 0.28);
+        background: rgba(6, 18, 38, 0.5);
+        color: #d3e0fc;
+      }
+
+      .gb-mapping-list {
+        list-style: none;
+        margin: 8px 0 0;
+        padding: 0;
+        border-top: 1px solid rgba(255, 255, 255, 0.14);
+      }
+
+      .gb-mapping-item {
+        font-size: 12px;
+        color: #dbe7ff;
+        padding: 7px 2px;
+        border-bottom: 1px dashed rgba(255, 255, 255, 0.12);
+      }
+    `,document.head.appendChild(t)}createMainDiv(){this.mainDiv=document.createElement("div"),this.mainDiv.setAttribute("name","bot-main-div"),this.dragHandle=document.createElement("div"),this.dragHandle.className="gb-drag-handle",this.dragHandle.textContent="GrepolisBot Control Deck",this.mainDiv.appendChild(this.dragHandle),this.easterEgg=document.createElement("div"),this.easterEgg.className="gb-easter-egg",this.easterEgg.textContent="Forged by ničite4000l | GitHub: NaKamize",this.mainDiv.appendChild(this.easterEgg),this.dragHandle.addEventListener("dblclick",()=>{this.easterEgg.classList.toggle("visible")}),this.tabBar=document.createElement("div"),this.tabBar.className="gb-tabs",this.automationTab=document.createElement("button"),this.automationTab.className="gb-tab active",this.automationTab.textContent="Automation",this.dodgeTab=document.createElement("button"),this.dodgeTab.className="gb-tab",this.dodgeTab.textContent="Dodge",this.tabBar.appendChild(this.automationTab),this.tabBar.appendChild(this.dodgeTab),this.mainDiv.appendChild(this.tabBar),this.automationPage=document.createElement("div"),this.automationPage.className="gb-page",this.dodgePage=document.createElement("div"),this.dodgePage.className="gb-page hidden",this.mainDiv.appendChild(this.automationPage),this.mainDiv.appendChild(this.dodgePage),this.panel.parentNode.insertBefore(this.mainDiv,this.panel),this.wireTabs()}wireTabs(){this.automationTab.addEventListener("click",()=>{this.automationTab.classList.add("active"),this.dodgeTab.classList.remove("active"),this.automationPage.classList.remove("hidden"),this.dodgePage.classList.add("hidden")}),this.dodgeTab.addEventListener("click",()=>{this.dodgeTab.classList.add("active"),this.automationTab.classList.remove("active"),this.dodgePage.classList.remove("hidden"),this.automationPage.classList.add("hidden")})}addDragFunctionality(){let t=!1,e=0,i=0,n=s=>{t=!0,e=s.clientX-this.mainDiv.offsetLeft,i=s.clientY-this.mainDiv.offsetTop},a=()=>{t=!1},o=s=>{t&&(this.mainDiv.style.left=s.clientX-e+"px",this.mainDiv.style.top=s.clientY-i+"px")};this.dragHandle.addEventListener("mousedown",n),document.addEventListener("mouseup",a),document.addEventListener("mousemove",o)}createAutoFarmUI(){new b(this.automationPage,this.autoFarm).createFarmUI(),new w(this.automationPage,this.autoCulture).createCultureUI(),new y(this.automationPage,this.autoSilverVault).createSilverVaultUI(),new f(this.dodgePage,this.attackDodger).createDodgeUI()}};(function(){window.addEventListener("load",function(){setTimeout(function(){try{new C}catch(d){console.error("GrepolisBot failed to initialize:",d)}},2e3)})})();})();

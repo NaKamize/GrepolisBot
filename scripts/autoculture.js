@@ -1,13 +1,18 @@
 "use strict";
 
-class AutoCulture {
+import { Utils } from "./utils.js";
+import { SELECTORS } from "./selectors.js";
+
+export class AutoCulture {
   constructor() {
     this.utils = new Utils();
+    this.running = false;
+    this.intervalMinutes = 0;
   }
 
   async selectOverview() {
     this.utils.waitForElementToAppear(
-      "#overviews_link_hover_menu > div.box.middle.left > div > div > ul > li.subsection.curator.enabled > ul > li.culture_overview > a",
+      SELECTORS.culture.overviewLink,
       (element) => {
         element.click();
       }
@@ -16,7 +21,7 @@ class AutoCulture {
   }
 
   async confirm() {
-    this.utils.waitForElementToAppear("#start_all_celebrations", (element) => {
+    this.utils.waitForElementToAppear(SELECTORS.culture.startAllButton, (element) => {
       element.click();
     });
     await this.utils.timeout(1001 + this.utils.generateDelay());
@@ -24,7 +29,7 @@ class AutoCulture {
 
   async close() {
     this.utils.waitForElementToAppear(
-      "body > div.ui-dialog.ui-corner-all.ui-widget.ui-widget-content.ui-front.ui-draggable.js-window-main-container > div.ui-dialog-titlebar.ui-corner-all.ui-widget-header.ui-helper-clearfix.ui-draggable-handle > button",
+      SELECTORS.dialogs.closeButton,
       (element) => {
         element.click();
       }
@@ -50,7 +55,7 @@ class AutoCulture {
     }
 
     this.utils.waitForElementToAppear(
-      "#place_celebration_select",
+      SELECTORS.culture.celebrationSelect,
       (element) => {
         element.click();
       }
@@ -71,20 +76,37 @@ class AutoCulture {
     await this.selectOption(opt);
     await this.confirm();
     await this.close();
-    console.log("Culture is being runned.");
+    console.log("Culture celebration started.");
   }
 
-  async run(opt, time) {
-    console.log(time);
-    const seconds = this.utils.convertToSeconds(time);
-    console.log(seconds);
-    this.seconds = seconds;
+  async start(opt, intervalMinutes) {
+    if (this.running) {
+      console.warn("AutoCulture is already running.");
+      return;
+    }
 
-    await this.repeatCulture(opt);
+    const minutes = Number.parseInt(intervalMinutes, 10);
 
-    let delay =
-      this.seconds * 1000 +
-      Math.floor(Math.random() * (900000 - 180000) + 120000);
-    console.log(delay);
+    if (!Number.isFinite(minutes) || minutes < 1) {
+      throw new Error("Invalid culture interval in minutes.");
+    }
+
+    this.intervalMinutes = minutes;
+    this.running = true;
+
+    while (this.running) {
+      try {
+        await this.repeatCulture(opt);
+      } catch (error) {
+        console.error("AutoCulture cycle failed:", error);
+      }
+
+      const delay = this.intervalMinutes * 60 * 1000;
+      await this.utils.waitFor(delay, () => this.running);
+    }
+  }
+
+  stop() {
+    this.running = false;
   }
 }

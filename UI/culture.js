@@ -1,19 +1,24 @@
 "use strict";
-class CultureUI {
-  constructor(mainDiv) {
+
+export class CultureUI {
+  constructor(mainDiv, autoCulture) {
     this.mainDiv = mainDiv;
+    this.autoCulture = autoCulture;
+    this.isRunning = false;
   }
 
   createHeading() {
     const heading = document.createElement("h3");
-    heading.textContent = "AutoCulture";
-    heading.style.color = "Yellow";
+    heading.textContent = "Culture Planner";
+    heading.className = "gb-section-title";
+    heading.style.color = "#ffd77d";
     return heading;
   }
 
   createDropDown(optionValues, name) {
     const dropDown = document.createElement("select");
     dropDown.setAttribute("name", name);
+    dropDown.className = "gb-select";
 
     for (let i = 0; i < optionValues.length; i++) {
       const option = document.createElement("option");
@@ -24,22 +29,50 @@ class CultureUI {
     return dropDown;
   }
 
+  createMinutesInput() {
+    const input = document.createElement("input");
+    input.type = "number";
+    input.min = "1";
+    input.step = "1";
+    input.value = "60";
+    input.placeholder = "Interval (minutes)";
+    input.setAttribute("name", "culture-interval-minutes");
+    input.className = "gb-input";
+    return input;
+  }
+
   createButton() {
     const button = document.createElement("button");
     button.textContent = "Start";
+    button.className = "gb-btn";
 
-    button.addEventListener("click", function () {
-      let ac = new AutoCulture();
-      const dropDown = document.querySelector(
-        "select[name='culture-drop-down']"
+    button.addEventListener("click", async () => {
+      const minutesInput = document.querySelector(
+        "input[name='culture-interval-minutes']"
       );
       const optDropDown = document.querySelector(
         "select[name='option-drop-down']"
       );
-      const selectedValue = dropDown.value;
+      const selectedValue = minutesInput.value;
       const selectedOption = optDropDown.value;
-      console.log(selectedOption);
-      ac.run(selectedOption, selectedValue);
+
+      if (!this.isRunning) {
+        this.isRunning = true;
+        button.textContent = "Stop";
+        try {
+          await this.autoCulture.start(selectedOption, selectedValue);
+        } catch (error) {
+          console.error("Failed to start AutoCulture:", error);
+          this.autoCulture.stop();
+        }
+        this.isRunning = false;
+        button.textContent = "Start";
+        return;
+      }
+
+      this.autoCulture.stop();
+      this.isRunning = false;
+      button.textContent = "Start";
     });
 
     return button;
@@ -47,11 +80,14 @@ class CultureUI {
 
   createAutoCultureDiv(name) {
     const autoFarmDiv = document.createElement("div");
-    autoFarmDiv.className = name;
+    autoFarmDiv.className = name + " gb-row";
     return autoFarmDiv;
   }
 
   createCultureUI() {
+    const section = document.createElement("section");
+    section.className = "gb-section";
+
     const optionValues = [
       "Mestský festival",
       "Olympijské hry",
@@ -59,30 +95,38 @@ class CultureUI {
       "Divadelné hry",
     ];
 
-    const optionValues1 = [
-      "01:00:00",
-      "02:00:00",
-      "04:00:00",
-      "08:00:00",
-      "10:00:00",
-      "11:00:00",
-      "12:00:00",
-    ];
-
     const heading = this.createHeading();
+    const hint = document.createElement("p");
+    hint.className = "gb-hint";
+    hint.textContent =
+      "Zadaj interval v minutach. Kultura sa po spusteni opakuje kazdych X minut.";
+
+    const typeLabel = document.createElement("p");
+    typeLabel.className = "gb-label";
+    typeLabel.textContent = "Typ oslavy";
+
+    const intervalLabel = document.createElement("p");
+    intervalLabel.className = "gb-label";
+    intervalLabel.textContent = "Interval opakovania (minuty)";
+
     const dropDown = this.createDropDown(optionValues, "option-drop-down");
-    const dropDown1 = this.createDropDown(optionValues1, "culture-drop-down");
+    const minutesInput = this.createMinutesInput();
+    minutesInput.placeholder = "Napr. 60 min";
     const button = this.createButton();
     const autoCultureDiv = this.createAutoCultureDiv("auto-culture-options");
     const autoCultureDiv1 = this.createAutoCultureDiv("auto-culture-timer");
 
     autoCultureDiv.appendChild(dropDown);
 
-    autoCultureDiv1.appendChild(dropDown1);
+    autoCultureDiv1.appendChild(minutesInput);
     autoCultureDiv1.appendChild(button);
 
-    this.mainDiv.appendChild(heading);
-    this.mainDiv.appendChild(autoCultureDiv);
-    this.mainDiv.appendChild(autoCultureDiv1);
+    section.appendChild(heading);
+    section.appendChild(hint);
+    section.appendChild(typeLabel);
+    section.appendChild(autoCultureDiv);
+    section.appendChild(intervalLabel);
+    section.appendChild(autoCultureDiv1);
+    this.mainDiv.appendChild(section);
   }
 }

@@ -1,7 +1,14 @@
-class AttackDodger {
+"use strict";
+
+import { Utils } from "./utils.js";
+
+export class AttackDodger {
   constructor() {
     this.utils = new Utils();
     this.attackCount = 0;
+    this.running = false;
+    this.mutationObserver = null;
+    this.pendingDodges = [];
   }
 
   async getListOfAttacks() {
@@ -22,14 +29,21 @@ class AttackDodger {
     console.log(dodgeIn);
     const [hours, minutes, seconds] = dodgeIn.split(":").map(Number);
 
-    // Calculate the total seconds
-    const totalSeconds = (hours * 3600) + (minutes * 60) + seconds;
+    // Calculate total seconds until impact.
+    const totalSeconds = hours * 3600 + minutes * 60 + seconds;
 
     console.log(totalSeconds);
 
-    setTimeout(async () => {
+    const dodgeDelay = Math.max(totalSeconds * 1000 - 40000, 0);
+
+    const timeoutId = setTimeout(async () => {
+      if (!this.running) {
+        return;
+      }
       await this.makeDodge(dodgeFromTown);
-    }, (totalSeconds*1000) - 40000);
+    }, dodgeDelay);
+
+    this.pendingDodges.push(timeoutId);
   }
 
   async villagerDef() {
@@ -71,7 +85,7 @@ class AttackDodger {
     // send all ships
     this.utils.waitForElementToAppear(
       "div > form > div.town_units_wrapper > div > div.unit_wrapper > div.naval_units.clearfix > div",
-      (element) => {
+      () => {
         const divElements = document.querySelectorAll(
           "div > form > div.town_units_wrapper > div > div.unit_wrapper > div.naval_units.clearfix > div"
         );
@@ -94,7 +108,7 @@ class AttackDodger {
     // send all troops
     this.utils.waitForElementToAppear(
       "div > form > div.town_units_wrapper > div > div.unit_wrapper > div.ground_units.clearfix > div",
-      (element) => {
+      () => {
         const divElements = document.querySelectorAll(
           "div > form > div.town_units_wrapper > div > div.unit_wrapper > div.ground_units.clearfix > div"
         );
@@ -328,17 +342,38 @@ class AttackDodger {
   }
 
   run() {
+    if (this.running) {
+      console.warn("AttackDodger is already running.");
+      return;
+    }
+
+    this.running = true;
+
     const attackCount = document.querySelector(
       "#ui_box > div.tb_activities.toolbar_activities > div.middle > div:nth-child(1) > div.activity.attack_indicator > div.hover_state > div > div"
     );
+
+    if (!attackCount) {
+      console.warn("Attack indicator not found.");
+      this.running = false;
+      return;
+    }
 
     if (attackCount.innerText !== "") {
       this.attackCount = parseInt(attackCount.innerText);
       console.log("Attack count: " + this.attackCount);
     }
 
-    const mutationObserver = new MutationObserver((mutations) => {
+    this.mutationObserver = new MutationObserver((mutations) => {
+      if (!this.running) {
+        return;
+      }
+
       setTimeout(() => {
+        if (!this.running || mutations.length < 3 || !mutations[2].addedNodes[1]) {
+          return;
+        }
+
         if (mutations[2].type === "childList") {
           if (
             parseInt(
@@ -369,10 +404,30 @@ class AttackDodger {
       "#ui_box > div.tb_activities.toolbar_activities > div.middle > div:nth-child(1) > div.activity.attack_indicator"
     );
 
-    mutationObserver.observe(activity, {
+    if (!activity) {
+      console.warn("Activity container not found.");
+      this.running = false;
+      return;
+    }
+
+    this.mutationObserver.observe(activity, {
       childList: true,
       subtree: true,
       attributes: true,
     });
+  }
+
+  stop() {
+    this.running = false;
+
+    if (this.mutationObserver) {
+      this.mutationObserver.disconnect();
+      this.mutationObserver = null;
+    }
+
+    for (const timeoutId of this.pendingDodges) {
+      clearTimeout(timeoutId);
+    }
+    this.pendingDodges = [];
   }
 }

@@ -1,14 +1,23 @@
 "use strict";
 
-class AutoFarm {
+import { Utils } from "./utils.js";
+import { SELECTORS } from "./selectors.js";
+
+export class AutoFarm {
   constructor() {
     this.utils = new Utils();
+    this.running = false;
+    this.seconds = 0;
   }
 
   async selectVillages() {
     const linkElement = document.querySelector(
-      "#overviews_link_hover_menu > div.box.middle.left > div > div > ul > li.subsection.captain.enabled > ul > li.farm_town_overview > a"
+      SELECTORS.farm.overviewLink
     );
+
+    if (!linkElement) {
+      throw new Error("Unable to open farm town overview.");
+    }
 
     function triggerClickEvent(target) {
       const clickEvent = new MouseEvent("click", {
@@ -25,12 +34,12 @@ class AutoFarm {
 
   async selectAll() {
     this.utils.waitForElementToAppear(
-      "#fto_town_wrapper > div > div.game_header.bold > span.checkbox_wrapper > a",
+      SELECTORS.farm.selectAll,
       (element) => {
         element.click();
       }
     );
-    await this.utils.timeout(1547 + this.utils.generateDelay());
+    await this.utils.timeout(947 + this.utils.generateDelay());
   }
 
   async checkTime(seconds) {
@@ -63,7 +72,7 @@ class AutoFarm {
 
   async collect() {
     this.utils.waitForElementToAppear(
-      "#fto_claim_button > div.caption.js-caption",
+      SELECTORS.farm.claimButton,
       (element) => {
         element.click();
       }
@@ -73,7 +82,7 @@ class AutoFarm {
 
   async confirm() {
     this.utils.waitForElementToAppear(
-      ".window_content.js-window-content > div > div.buttons > div.btn_confirm.button_new > div.caption.js-caption",
+      SELECTORS.farm.confirmButton,
       (element) => {
         element.click();
       }
@@ -83,7 +92,7 @@ class AutoFarm {
 
   async close() {
     this.utils.waitForElementToAppear(
-      "body > div.ui-dialog.ui-corner-all.ui-widget.ui-widget-content.ui-front.ui-draggable.js-window-main-container > div.ui-dialog-titlebar.ui-corner-all.ui-widget-header.ui-helper-clearfix.ui-draggable-handle > button",
+      SELECTORS.dialogs.closeButton,
       (element) => {
         element.click();
       }
@@ -101,19 +110,36 @@ class AutoFarm {
     console.log("Collecting is finished");
   }
 
-  async run(time) {
-    console.log(time);
-    const seconds = this.utils.convertToSeconds(time);
-    console.log(seconds);
-    this.seconds = seconds;
-
-    while (true) {
-      await this.repeatFarm();
-
-      let delay =
-        this.seconds * 1000 + Math.floor(Math.random() * (30000 - 5000) + 5000);
-      console.log(delay);
-      await this.utils.timeout(delay);
+  async start(time) {
+    if (this.running) {
+      console.warn("AutoFarm is already running.");
+      return;
     }
+
+    const seconds = this.utils.convertToSeconds(time);
+
+    if (!seconds || seconds < 1) {
+      throw new Error("Invalid farming interval.");
+    }
+
+    this.seconds = seconds;
+    this.running = true;
+
+    while (this.running) {
+      try {
+        await this.repeatFarm();
+      } catch (error) {
+        console.error("AutoFarm cycle failed:", error);
+      }
+
+      const delay =
+        this.seconds * 1000 + Math.floor(Math.random() * (30000 - 5000) + 5000);
+
+      await this.utils.waitFor(delay, () => this.running);
+    }
+  }
+
+  stop() {
+    this.running = false;
   }
 }

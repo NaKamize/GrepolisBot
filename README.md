@@ -27,6 +27,48 @@ The control panel is **draggable** — place it wherever you like on the screen.
 2. Go to the **[GreasyFork page](https://greasyfork.org/en/scripts/468760-grepolisbot)** and click **Install this script**.
 3. Open [Grepolis](https://www.grepolis.com/) — the bot panel will appear automatically inside the game.
 
+## Development
+
+This project now uses a modern JavaScript workflow:
+
+- **esbuild** for bundling
+- **ES modules** for code organization
+- **ESLint** for static analysis
+- **Prettier** for formatting
+
+### Local setup
+
+1. Install Node.js 20+.
+2. Install dependencies:
+
+	```bash
+	npm install
+	```
+
+3. Build userscript output:
+
+	```bash
+	npm run build
+	```
+
+4. Lint the code:
+
+	```bash
+	npm run lint
+	```
+
+5. Format code:
+
+	```bash
+	npm run format
+	```
+
+The generated userscript is written to the `script` file.
+
+### Deploy script
+
+`deploy.sh` now installs dependencies and runs the build pipeline instead of manual file concatenation.
+
 ---
 
 ## Usage
@@ -52,6 +94,7 @@ The control panel is **draggable** — place it wherever you like on the screen.
 - All actions use randomised delays to mimic human behaviour.
 - The dodger schedules troop movement 40 seconds before the calculated impact time.
 - Dodge targets are persisted in `localStorage`, so they survive page refreshes.
+- Farm, culture, and dodge features now use explicit start/stop lifecycles to avoid duplicate loops.
 
 ---
 

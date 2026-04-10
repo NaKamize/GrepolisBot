@@ -1,6 +1,6 @@
 "use strict";
 
-class Utils {
+export class Utils {
   timeout(delay) {
     return new Promise((r) => setTimeout(r, delay));
   }
@@ -34,5 +34,34 @@ class Utils {
         }
       }, interval);
     });
+  }
+
+  async clickWhenAvailable(selector, interval = 100, maxAttempts = 20) {
+    const element = await this.waitForElementToAppear(
+      selector,
+      null,
+      interval,
+      maxAttempts
+    );
+
+    if (!element) {
+      return false;
+    }
+
+    element.click();
+    return true;
+  }
+
+  async waitFor(ms, shouldContinue) {
+    const tick = 250;
+    let elapsed = 0;
+    while (elapsed < ms) {
+      if (typeof shouldContinue === "function" && !shouldContinue()) {
+        return;
+      }
+      const remaining = Math.min(tick, ms - elapsed);
+      await this.timeout(remaining);
+      elapsed += remaining;
+    }
   }
 }
