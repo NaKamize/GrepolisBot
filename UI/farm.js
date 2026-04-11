@@ -82,10 +82,21 @@ export class FarmUI {
     section.className = "gb-section";
 
     const heading = this.createHeading();
-    const hint = document.createElement("p");
-    hint.className = "gb-hint";
-    hint.textContent =
+    const titleRow = document.createElement("div");
+    titleRow.className = "gb-title-row";
+
+    const infoBadge = document.createElement("span");
+    infoBadge.className = "gb-info-badge";
+    infoBadge.textContent = "i";
+
+    const tooltip = document.createElement("span");
+    tooltip.className = "gb-tooltip";
+    tooltip.textContent =
       "Vyber interval vo formate HH:MM:SS. Po kazdom kole sa prida nahodny delay 5-30 sekund.";
+    infoBadge.appendChild(tooltip);
+
+    titleRow.appendChild(heading);
+    titleRow.appendChild(infoBadge);
 
     const label = document.createElement("p");
     label.className = "gb-label";
@@ -98,8 +109,7 @@ export class FarmUI {
     autoFarmDiv.appendChild(dropDown);
     autoFarmDiv.appendChild(button);
 
-    section.appendChild(heading);
-    section.appendChild(hint);
+    section.appendChild(titleRow);
     section.appendChild(label);
     section.appendChild(autoFarmDiv);
     this.mainDiv.appendChild(section);

@@ -77,7 +77,7 @@ export class AutoFarm {
         element.click();
       }
     );
-    await this.utils.timeout(2200);
+    await this.utils.timeout(1480 + this.utils.generateDelay());
   }
 
   async confirm() {
@@ -87,7 +87,7 @@ export class AutoFarm {
         element.click();
       }
     );
-    await this.utils.timeout(2188 + this.utils.generateDelay());
+    await this.utils.timeout(1188 + this.utils.generateDelay());
   }
 
   async close() {

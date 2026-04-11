@@ -96,10 +96,21 @@ export class CultureUI {
     ];
 
     const heading = this.createHeading();
-    const hint = document.createElement("p");
-    hint.className = "gb-hint";
-    hint.textContent =
+    const titleRow = document.createElement("div");
+    titleRow.className = "gb-title-row";
+
+    const infoBadge = document.createElement("span");
+    infoBadge.className = "gb-info-badge";
+    infoBadge.textContent = "i";
+
+    const tooltip = document.createElement("span");
+    tooltip.className = "gb-tooltip";
+    tooltip.textContent =
       "Zadaj interval v minutach. Kultura sa po spusteni opakuje kazdych X minut.";
+    infoBadge.appendChild(tooltip);
+
+    titleRow.appendChild(heading);
+    titleRow.appendChild(infoBadge);
 
     const typeLabel = document.createElement("p");
     typeLabel.className = "gb-label";
@@ -121,8 +132,7 @@ export class CultureUI {
     autoCultureDiv1.appendChild(minutesInput);
     autoCultureDiv1.appendChild(button);
 
-    section.appendChild(heading);
-    section.appendChild(hint);
+    section.appendChild(titleRow);
     section.appendChild(typeLabel);
     section.appendChild(autoCultureDiv);
     section.appendChild(intervalLabel);

@@ -132,6 +132,54 @@ export class MainUI {
         letter-spacing: 0.03em;
       }
 
+      .gb-title-row {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 8px;
+      }
+
+      .gb-info-badge {
+        position: relative;
+        width: 18px;
+        height: 18px;
+        border-radius: 50%;
+        border: 1px solid rgba(255, 255, 255, 0.35);
+        background: rgba(11, 26, 50, 0.78);
+        color: #d8e8ff;
+        font-size: 11px;
+        font-weight: 700;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        cursor: help;
+      }
+
+      .gb-tooltip {
+        position: absolute;
+        right: 0;
+        top: 24px;
+        width: 220px;
+        padding: 8px;
+        border-radius: 8px;
+        background: rgba(5, 12, 24, 0.95);
+        border: 1px solid rgba(255, 255, 255, 0.18);
+        color: #d9e7ff;
+        font-size: 11px;
+        line-height: 1.35;
+        opacity: 0;
+        visibility: hidden;
+        transform: translateY(-4px);
+        transition: opacity 0.15s ease, transform 0.15s ease, visibility 0.15s ease;
+        z-index: 2000;
+      }
+
+      .gb-info-badge:hover .gb-tooltip {
+        opacity: 1;
+        visibility: visible;
+        transform: translateY(0);
+      }
+
       .gb-hint {
         margin: 0 0 8px;
         font-size: 11px;

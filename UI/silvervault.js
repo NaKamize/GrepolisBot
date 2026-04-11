@@ -76,10 +76,21 @@ export class SilverVaultUI {
     section.className = "gb-section";
 
     const heading = this.createHeading();
-    const hint = document.createElement("p");
-    hint.className = "gb-hint";
-    hint.textContent =
+    const titleRow = document.createElement("div");
+    titleRow.className = "gb-title-row";
+
+    const infoBadge = document.createElement("span");
+    infoBadge.className = "gb-info-badge";
+    infoBadge.textContent = "i";
+
+    const tooltip = document.createElement("span");
+    tooltip.className = "gb-tooltip";
+    tooltip.textContent =
       "Zadaj hodnoty v striebre. Cyklus bezi podla intervalu v minutach + nahodny delay 30-300 sekund.";
+    infoBadge.appendChild(tooltip);
+
+    titleRow.appendChild(heading);
+    titleRow.appendChild(infoBadge);
 
     const keepLabel = document.createElement("p");
     keepLabel.className = "gb-label";
@@ -129,8 +140,7 @@ export class SilverVaultUI {
     action.appendChild(spacer);
     action.appendChild(startButton);
 
-    section.appendChild(heading);
-    section.appendChild(hint);
+    section.appendChild(titleRow);
     section.appendChild(inputs);
     section.appendChild(action);
 
