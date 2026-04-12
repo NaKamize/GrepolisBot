@@ -19,6 +19,10 @@ A [Tampermonkey](https://www.tampermonkey.net/) userscript bot for [Grepolis](ht
 
 The control panel is **draggable** — place it wherever you like on the screen.
 
+## UI Preview
+
+![GrepolisBot UI preview](docs/images/ui-preview.png)
+
 ---
 
 ## Installation

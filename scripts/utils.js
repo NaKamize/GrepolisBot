@@ -53,15 +53,15 @@ export class Utils {
   }
 
   async waitFor(ms, shouldContinue) {
-    const tick = 250;
-    let elapsed = 0;
-    while (elapsed < ms) {
+    const endTime = Date.now() + ms;
+
+    while (Date.now() < endTime) {
       if (typeof shouldContinue === "function" && !shouldContinue()) {
         return;
       }
-      const remaining = Math.min(tick, ms - elapsed);
-      await this.timeout(remaining);
-      elapsed += remaining;
+
+      const remaining = endTime - Date.now();
+      await this.timeout(Math.min(1000, Math.max(remaining, 0)));
     }
   }
 }

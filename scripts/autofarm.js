@@ -101,6 +101,7 @@ export class AutoFarm {
   }
 
   async repeatFarm() {
+    console.log("Starting AutoFarm cycle...");
     await this.selectVillages();
     await this.selectAll();
     await this.checkTime(this.seconds);
@@ -135,7 +136,12 @@ export class AutoFarm {
       const delay =
         this.seconds * 1000 + Math.floor(Math.random() * (30000 - 5000) + 5000);
 
+      console.log(`Next farm run in ${Math.round(delay / 1000)} seconds`);
       await this.utils.waitFor(delay, () => this.running);
+
+      if (this.running) {
+        console.log("AutoFarm wait finished, starting next cycle.");
+      }
     }
   }
 
