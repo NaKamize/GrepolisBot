@@ -145,6 +145,10 @@ export class AutoSilverVault {
       const randomSeconds = this.randomBetween(30, 300);
       const nextDelay = baseDelay + randomSeconds * 1000;
 
+      console.log(
+        `Next silver vault run in ${Math.round(nextDelay / 1000)} seconds (${randomSeconds}s extra)`
+      );
+
       await this.utils.waitFor(nextDelay, () => this.running);
     }
   }

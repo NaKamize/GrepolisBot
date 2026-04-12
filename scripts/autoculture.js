@@ -10,6 +10,10 @@ export class AutoCulture {
     this.intervalMinutes = 0;
   }
 
+  randomBetween(min, max) {
+    return Math.floor(Math.random() * (max - min + 1) + min);
+  }
+
   async selectOverview() {
     this.utils.waitForElementToAppear(
       SELECTORS.culture.overviewLink,
@@ -101,7 +105,13 @@ export class AutoCulture {
         console.error("AutoCulture cycle failed:", error);
       }
 
-      const delay = this.intervalMinutes * 60 * 1000;
+      const baseDelay = this.intervalMinutes * 60 * 1000;
+      const extraSeconds = this.randomBetween(60, 90);
+      const delay = baseDelay + extraSeconds * 1000;
+
+      console.log(
+        `Next culture run in ${Math.round(delay / 1000)} seconds (${extraSeconds}s extra)`
+      );
       await this.utils.waitFor(delay, () => this.running);
     }
   }

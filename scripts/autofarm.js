@@ -134,7 +134,7 @@ export class AutoFarm {
       }
 
       const delay =
-        this.seconds * 1000 + Math.floor(Math.random() * (30000 - 5000) + 5000);
+        this.seconds * 1000 + Math.floor(Math.random() * (65000 - 15000) + 25000);
 
       console.log(`Next farm run in ${Math.round(delay / 1000)} seconds`);
       await this.utils.waitFor(delay, () => this.running);

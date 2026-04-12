@@ -106,7 +106,7 @@ export class CultureUI {
     const tooltip = document.createElement("span");
     tooltip.className = "gb-tooltip";
     tooltip.textContent =
-      "Zadaj interval v minutach. Kultura sa po spusteni opakuje kazdych X minut.";
+      "Zadaj interval v minutach. Kultura sa po spusteni opakuje kazdych X minut + nahodny delay 60-90 sekund.";
     infoBadge.appendChild(tooltip);
 
     titleRow.appendChild(heading);
