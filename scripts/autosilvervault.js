@@ -92,7 +92,7 @@ export class AutoSilverVault {
 
   async closeAllWindows() {
     await this.utils.clickWhenAvailable(
-      SELECTORS.silverVault.closeAllWindows,
+      SELECTORS.dialogs.closeAllWindows,
       100,
       20
     );

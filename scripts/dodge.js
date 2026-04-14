@@ -1,6 +1,7 @@
 "use strict";
 
 import { Utils } from "./utils.js";
+import { SELECTORS } from "./selectors.js";
 
 export class AttackDodger {
   constructor() {
@@ -130,23 +131,8 @@ export class AttackDodger {
   }
 
   async closeAll() {
-    const closeButtons = document.querySelectorAll(
-      "body > div.ui-dialog.ui-corner-all.ui-widget.ui-widget-content.ui-front.ui-draggable.ui-resizable.js-window-main-container > div.ui-dialog-titlebar.ui-corner-all.ui-widget-header.ui-helper-clearfix.ui-draggable-handle > button"
-    );
-
-    for (const button of closeButtons) {
-      button.click();
-    }
-
+    await this.utils.clickWhenAvailable(SELECTORS.dialogs.closeAllWindows, 100, 20);
     await this.utils.timeout(200 + this.utils.generateDelay());
-
-    const closeButtonsNext = document.querySelectorAll(
-      "body > div > div.ui-dialog-titlebar.ui-corner-all.ui-widget-header.ui-helper-clearfix.ui-draggable-handle > button"
-    );
-
-    for (const button of closeButtonsNext) {
-      button.click();
-    }
   }
 
   simulateHover(element) {

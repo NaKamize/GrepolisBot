@@ -92,7 +92,7 @@ export class AutoFarm {
 
   async close() {
     this.utils.waitForElementToAppear(
-      SELECTORS.dialogs.closeButton,
+      SELECTORS.dialogs.closeAllWindows,
       (element) => {
         element.click();
       }

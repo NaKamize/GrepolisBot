@@ -1,7 +1,7 @@
 export const SELECTORS = {
   dialogs: {
-    closeButton:
-      "body > div.ui-dialog.ui-corner-all.ui-widget.ui-widget-content.ui-front.ui-draggable.js-window-main-container > div.ui-dialog-titlebar.ui-corner-all.ui-widget-header.ui-helper-clearfix.ui-draggable-handle > button",
+    closeAllWindows:
+      "#ui_box > div.btn_close_all_windows > div.middle > div > div.box-middle > div",
   },
   farm: {
     overviewLink:
