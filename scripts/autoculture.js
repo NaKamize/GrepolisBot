@@ -38,7 +38,7 @@ export class AutoCulture {
         element.click();
       }
     );
-    await this.utils.timeout(1488 + this.utils.generateDelay());
+    await this.utils.timeout(588 + this.utils.generateDelay());
   }
 
   async selectOption(opt) {

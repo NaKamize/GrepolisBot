@@ -87,7 +87,7 @@ export class AutoFarm {
         element.click();
       }
     );
-    await this.utils.timeout(1188 + this.utils.generateDelay());
+    await this.utils.timeout(888 + this.utils.generateDelay());
   }
 
   async close() {
@@ -97,7 +97,7 @@ export class AutoFarm {
         element.click();
       }
     );
-    await this.utils.timeout(1205 + this.utils.generateDelay());
+    await this.utils.timeout(105 + this.utils.generateDelay());
   }
 
   async repeatFarm() {
