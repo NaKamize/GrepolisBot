@@ -1,23 +1,27 @@
 # GrepolisBot
 
-[![Greasy Fork](https://img.shields.io/badge/Greasy%20Fork-61%20installs-brightgreen?logo=tampermonkey)](https://greasyfork.org/en/scripts/468760-grepolisbot)
+[![Greasy Fork](https://img.shields.io/badge/Greasy%20Fork-67%20installs-brightgreen?logo=tampermonkey)](https://greasyfork.org/en/scripts/468760-grepolisbot)
 [![GitHub](https://img.shields.io/badge/GitHub-NaKamize%2FGrepolisBot-blue?logo=github)](https://github.com/NaKamize/GrepolisBot)
 
-A [Tampermonkey](https://www.tampermonkey.net/) userscript bot for [Grepolis](https://www.grepolis.com/) that automates repetitive in-game tasks — farm collection, culture events, and attack dodging — so you can focus on strategy.
+A [Tampermonkey](https://www.tampermonkey.net/) userscript for [Grepolis](https://www.grepolis.com/) that automates repetitive tasks so you can spend more time on strategy and less on clicking.
 
-> **61 installs on GreasyFork and growing!** Thank you to everyone who uses GrepolisBot.
+> **67 installs on GreasyFork and growing.** Thank you for using GrepolisBot.
 
 ---
 
-## Features
+## What It Automates
 
-| Feature | Description |
-|---|---|
-| **AutoFarm** | Automatically collects resources from all farm towns at a configurable interval (5 min – 8 hours) |
-| **AutoCulture** | Starts culture celebrations (Town Festival, Olympic Games, Triumph Procession, Theatre Plays) on a schedule |
-| **AttackDodger** | Detects incoming attacks and automatically sends your troops to a safe town ~40 seconds before impact |
+| Module | What it does | Notes |
+|---|---|---|
+| **AutoFarm** | Collects farm-town resources in cycles | Uses selectable intervals from 5 minutes up to 8 hours and adds a random extra delay between runs |
+| **AutoCulture** | Starts culture celebrations repeatedly | Supports Town Festival, Olympic Games, Triumph Procession, and Theatre Plays with custom interval in minutes |
+| **AutoSilverVault** | Manages cave silver in bulk | Sets keep/store values for all towns and reruns every X minutes with random jitter |
+| **AttackDodger** | Watches for incoming attacks and schedules dodge actions | Plans support movement to configured safe targets about 40 seconds before impact |
 
-The control panel is **draggable** — place it wherever you like on the screen.
+The panel is draggable and split into tabs:
+
+- **Automation** tab: Farm, Culture, Silver Vault
+- **Dodge** tab: AttackDodger setup and controls
 
 ## UI Preview
 
@@ -27,82 +31,81 @@ The control panel is **draggable** — place it wherever you like on the screen.
 
 ## Installation
 
-1. Install [Tampermonkey](https://www.tampermonkey.net/) for your browser (Chrome, Firefox, Edge, etc.).
-2. Go to the **[GreasyFork page](https://greasyfork.org/en/scripts/468760-grepolisbot)** and click **Install this script**.
-3. Open [Grepolis](https://www.grepolis.com/) — the bot panel will appear automatically inside the game.
-
-## Development
-
-This project now uses a modern JavaScript workflow:
-
-- **esbuild** for bundling
-- **ES modules** for code organization
-- **ESLint** for static analysis
-- **Prettier** for formatting
-
-### Local setup
-
-1. Install Node.js 20+.
-2. Install dependencies:
-
-	```bash
-	npm install
-	```
-
-3. Build userscript output:
-
-	```bash
-	npm run build
-	```
-
-4. Lint the code:
-
-	```bash
-	npm run lint
-	```
-
-5. Format code:
-
-	```bash
-	npm run format
-	```
-
-The generated userscript is written to the `script` file.
-
-### Deploy script
-
-`deploy.sh` now installs dependencies and runs the build pipeline instead of manual file concatenation.
+1. Install [Tampermonkey](https://www.tampermonkey.net/) in your browser.
+2. Open the [GreasyFork script page](https://greasyfork.org/en/scripts/468760-grepolisbot).
+3. Click **Install this script**.
+4. Open Grepolis and wait for the page to load. The GrepolisBot panel appears automatically.
 
 ---
 
 ## Usage
 
 ### AutoFarm
-1. Select the farming interval from the dropdown (e.g. `01:30:00` for every 1.5 hours).
-2. Click **Start** — the bot will automatically collect from all farm towns and repeat at that interval.
+
+1. In the **Automation** tab, choose a farm interval in `HH:MM:SS` format.
+2. Click **Start**.
+3. Click **Stop** anytime to end the loop.
 
 ### AutoCulture
-1. Select the **celebration type** from the first dropdown.
-2. Select the **timing** from the second dropdown.
-3. Click **Start** — the bot will queue the celebration.
+
+1. Choose celebration type.
+2. Enter repeat interval in minutes.
+3. Click **Start**.
+
+### AutoSilverVault
+
+1. Enter how much silver to keep in towns.
+2. Enter how much silver to store in cave/hide.
+3. Enter repeat interval in minutes.
+4. Click **Start**.
 
 ### AttackDodger
-1. Switch to the town you want to dodge **from** using the in-game town arrows.
-2. Enter the **Player Name** and **Town Name** of the safe destination, then click **Submit** (saved per town to `localStorage`).
-3. Click **Start** — the bot monitors all incoming attacks and automatically moves your troops before each attack lands.
+
+1. Switch to the town you want to dodge from.
+2. Enter target **Player Name** and **Town Name**.
+3. Click **Submit** to save this route for the current town.
+4. Click **Start** to begin monitoring attacks.
+5. Repeat route setup for additional towns as needed.
+
+Saved routes are displayed directly in the Dodge section and stored in browser local storage.
 
 ---
 
-## How It Works
+## Technical Notes
 
-- All actions use randomised delays to mimic human behaviour.
-- The dodger schedules troop movement 40 seconds before the calculated impact time.
-- Dodge targets are persisted in `localStorage`, so they survive page refreshes.
-- Farm, culture, and dodge features now use explicit start/stop lifecycles to avoid duplicate loops.
+- Built with ES modules and bundled with esbuild.
+- Uses randomized delays to reduce predictable action timing.
+- All automations support explicit start/stop behavior.
+- AttackDodger clears pending timeouts and observers when stopped.
+
+---
+
+## Development
+
+### Requirements
+
+- Node.js 20+
+
+### Commands
+
+```bash
+npm install
+npm run build
+npm run build:watch
+npm run lint
+npm run lint:fix
+npm run format
+```
+
+The built userscript output is written to `script`.
+
+### Deploy helper
+
+`deploy.sh` installs dependencies and runs the build.
 
 ---
 
 ## Links
 
-- [GreasyFork](https://greasyfork.org/en/scripts/468760-grepolisbot) — install & rate the script
-- [GitHub](https://github.com/NaKamize/GrepolisBot) — source code & issues
+- [GreasyFork](https://greasyfork.org/en/scripts/468760-grepolisbot)
+- [GitHub repository](https://github.com/NaKamize/GrepolisBot)
